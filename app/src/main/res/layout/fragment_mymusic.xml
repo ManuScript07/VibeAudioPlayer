@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MyMusic">
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Мои треки"
+        android:textSize="35sp"
+        android:layout_gravity="top|left"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|right"
+        android:layout_marginTop="22dp"
+        android:layout_marginRight="55dp"
+        android:text="Все"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="330dp"
+        android:layout_gravity="center|top"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="70dp"
+        android:layout_marginRight="5dp" />
+
+    <ImageButton
+        android:id="@+id/imageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|right"
+        android:layout_marginTop="15dp"
+        android:layout_marginRight="5dp"
+        android:src="@drawable/baseline_keyboard_arrow_right_24" />
+
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:textSize="35sp"
+        android:textStyle="bold"
+        android:layout_marginTop="400dp"
+        android:layout_marginLeft="10dp"
+        android:text="Ещё"/>
+
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="180dp"
+        android:layout_height="90dp"
+        android:layout_marginTop="450dp"
+        android:layout_marginLeft="10dp"
+        android:textSize="20sp"
+        android:text="Плейлисты" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="180dp"
+        android:layout_height="90dp"
+        android:layout_marginLeft="200dp"
+        android:layout_marginTop="450dp"
+        android:text="Альбомы"
+        android:textSize="20sp" />
+
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="180dp"
+        android:layout_height="90dp"
+        android:layout_marginTop="540dp"
+        android:layout_marginLeft="10dp"
+        android:textSize="18sp"
+        android:text="Исполнители" />
+    <Button
+        android:id="@+id/button4"
+        android:layout_width="180dp"
+        android:layout_height="90dp"
+        android:layout_marginTop="540dp"
+        android:layout_marginLeft="200dp"
+        android:textSize="20sp"
+        android:text="История" />
+
+
+</FrameLayout>
