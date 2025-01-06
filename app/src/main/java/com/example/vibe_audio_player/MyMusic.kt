@@ -1,59 +1,56 @@
 package com.example.vibe_audio_player
 
+import SongRVAdapter
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.vibe_audio_player.databinding.FragmentMymusicBinding
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [MyMusic.newInstance] factory method to
- * create an instance of this fragment.
- */
 class MyMusic : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private lateinit var binding: FragmentMymusicBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_mymusic, container, false)
+    ): View {
+        binding = FragmentMymusicBinding.inflate(inflater, container, false)
+
+        val tracks = loadTracks()
+
+        // Убедимся, что переключение ViewSwitcher работает корректно
+        if (tracks.isEmpty()) {
+
+            binding.viewSwitcher.displayedChild = 1 // Показываем сообщение и кнопку
+            binding.addMusicButton.setOnClickListener {
+                Toast.makeText(context, "Добавить музыку", Toast.LENGTH_SHORT).show()
+            }
+        } else {
+
+            binding.viewSwitcher.displayedChild = 0 // Показываем RecyclerView
+            binding.recyclerView.layoutManager = LinearLayoutManager(context)
+            binding.recyclerView.adapter = SongRVAdapter(tracks) { song ->
+                Toast.makeText(context, "Вы выбрали: ${song.name}", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment Home.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            MyMusic().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+    private fun loadTracks(): List<Song> {
+        // Верните пустой или заполненный список для проверки
+        // В экран помещается 5 !!!
+        return listOf(
+             Song("Название песни 1", "Исполнитель 1", "ic_launcher_foreground.xml"),
+             Song("Название песни 2", "Исполнитель 2", "ic_launcher_foreground.xml"),
+             Song("Название песни 3", "Исполнитель 3", "ic_launcher_foreground.xml"),
+             Song("Название песни 4", "Исполнитель 4", "ic_launcher_foreground.xml"),
+             Song("Название песни 5", "Исполнитель 5", "ic_launcher_foreground.xml"),
+        )
     }
 }

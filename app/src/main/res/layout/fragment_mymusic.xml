@@ -6,90 +6,141 @@
     android:layout_height="match_parent"
     tools:context=".MyMusic">
 
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Мои треки"
-        android:textSize="35sp"
-        android:layout_gravity="top|left"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="10dp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top|right"
-        android:layout_marginTop="22dp"
-        android:layout_marginRight="55dp"
-        android:text="Все"
-        android:textSize="20sp"
-        android:textStyle="bold" />
-
-    <androidx.recyclerview.widget.RecyclerView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="330dp"
-        android:layout_gravity="center|top"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="70dp"
-        android:layout_marginRight="5dp" />
-
-    <ImageButton
-        android:id="@+id/imageButton"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="top|right"
-        android:layout_marginTop="15dp"
-        android:layout_marginRight="5dp"
-        android:src="@drawable/baseline_keyboard_arrow_right_24" />
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:layout_gravity="top">
 
-    <TextView
-        android:id="@+id/textView6"
-        android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Мои треки"
+            android:textSize="35sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Все"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginEnd="8dp" />
+
+        <ImageButton
+            android:id="@+id/imageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/baseline_keyboard_arrow_right_24" />
+    </LinearLayout>
+
+    <ViewSwitcher
+        android:id="@+id/viewSwitcher"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <!-- RecyclerView для списка треков -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:padding="16dp"
+            android:scrollbars="vertical"
+            android:layout_marginTop="70dp"/>
+
+        <!-- Сообщение и кнопка -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:layout_marginTop="-170dp">
+
+            <TextView
+                android:id="@+id/noTracksMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Вы ещё не загрузили ни одного трека"
+                android:textSize="18sp"
+                android:padding="8dp" />
+
+            <Button
+                android:id="@+id/addMusicButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Добавить музыку" />
+        </LinearLayout>
+    </ViewSwitcher>
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="left"
-        android:textSize="35sp"
-        android:textStyle="bold"
-        android:layout_marginTop="400dp"
-        android:layout_marginLeft="10dp"
-        android:text="Ещё"/>
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:layout_gravity="bottom">
 
-    <Button
-        android:id="@+id/button1"
-        android:layout_width="180dp"
-        android:layout_height="90dp"
-        android:layout_marginTop="450dp"
-        android:layout_marginLeft="10dp"
-        android:textSize="20sp"
-        android:text="Плейлисты" />
+        <TextView
+            android:id="@+id/textView6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ещё"
+            android:textSize="35sp"
+            android:textStyle="bold" />
 
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="180dp"
-        android:layout_height="90dp"
-        android:layout_marginLeft="200dp"
-        android:layout_marginTop="450dp"
-        android:text="Альбомы"
-        android:textSize="20sp" />
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:rowCount="2"
+            android:columnCount="2"
+            android:layout_marginTop="16dp">
 
-    <Button
-        android:id="@+id/button3"
-        android:layout_width="180dp"
-        android:layout_height="90dp"
-        android:layout_marginTop="540dp"
-        android:layout_marginLeft="10dp"
-        android:textSize="18sp"
-        android:text="Исполнители" />
-    <Button
-        android:id="@+id/button4"
-        android:layout_width="180dp"
-        android:layout_height="90dp"
-        android:layout_marginTop="540dp"
-        android:layout_marginLeft="200dp"
-        android:textSize="20sp"
-        android:text="История" />
+            <Button
+                android:id="@+id/button1"
+                android:layout_width="0dp"
+                android:layout_height="120dp"
+                android:layout_columnWeight="1"
+                android:layout_rowWeight="1"
+                android:layout_margin="4dp"
+                android:text="Плейлисты"
+                android:textSize="19sp" />
 
+            <Button
+                android:id="@+id/button2"
+                android:layout_width="0dp"
+                android:layout_height="120dp"
+                android:layout_columnWeight="1"
+                android:layout_rowWeight="1"
+                android:layout_margin="4dp"
+                android:text="Альбомы"
+                android:textSize="22sp" />
 
+            <Button
+                android:id="@+id/button3"
+                android:layout_width="0dp"
+                android:layout_height="120dp"
+                android:layout_columnWeight="1"
+                android:layout_rowWeight="1"
+                android:layout_margin="4dp"
+                android:text="Исполнители"
+                android:textSize="15sp" />
+
+            <Button
+                android:id="@+id/button4"
+                android:layout_width="0dp"
+                android:layout_height="120dp"
+                android:layout_columnWeight="1"
+                android:layout_rowWeight="1"
+                android:layout_margin="4dp"
+                android:text="История"
+                android:textSize="22sp" />
+        </GridLayout>
+    </LinearLayout>
 </FrameLayout>
