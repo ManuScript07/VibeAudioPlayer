@@ -18,7 +18,7 @@
         <!-- Прозрачный статус-бар (если требуется) -->
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:windowLightNavigationBar">true</item>
-
         <!-- Customize your theme here. -->
     </style>
+
 </resources>

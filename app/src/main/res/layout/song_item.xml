@@ -6,39 +6,83 @@
             name="song"
             type="com.example.vibe_audio_player.Song" />
     </data>
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:orientation="horizontal"
-        android:padding="0dp">
-        <androidx.appcompat.widget.AppCompatImageView
+        android:layout_height="wrap_content"
+        android:padding="2dp"
+        android:layout_marginBottom="5dp">
+
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/imageView"
-            android:layout_width="60dp"
-            android:layout_height="match_parent"
-            app:srcCompat="@drawable/ic_launcher_foreground" />
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            app:shapeAppearanceOverlay="@style/curved"
+            app:strokeColor="@color/purple_500"
+            app:strokeWidth="2dp"
+            android:layout_marginStart="5dp"/>
+        
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:text="@{song.name}"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_toEndOf="@+id/imageView"
+            android:layout_toStartOf="@+id/menu"
+            android:layout_marginStart="5dp"/>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-            <TextView
-                android:id="@+id/textView1"
-                android:layout_width="match_parent"
-                android:layout_height="35dp"
-                android:gravity="left"
-                android:padding="5dp"
-                android:textStyle="bold"
-                android:textSize="20dp"
-                android:text="@{song.executor}" />
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="15dp"
+            android:text="@{song.executor}"
+            android:textSize="12sp"
+            android:layout_toEndOf="@+id/imageView"
+            android:layout_toStartOf="@+id/menu"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="20dp" />
 
-            <TextView
-                android:id="@+id/textView2"
-                android:layout_width="match_parent"
-                android:layout_height="35dp"
-                android:gravity="left"
-                android:padding="5dp"
-                android:textSize="20dp"
-                android:text="@{song.name}" />
-        </LinearLayout>
-    </LinearLayout>
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="15dp"
+            android:text="0:00"
+            android:textSize="12sp"
+            android:layout_toEndOf="@+id/imageView"
+            android:layout_toStartOf="@+id/menu"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="35dp" />
+
+        <ImageButton
+            android:id="@+id/menu"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/baseline_menu_24"
+            android:background="@android:color/transparent" />
+<!--        <LinearLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:orientation="vertical">-->
+<!--            <TextView-->
+<!--                android:id="@+id/textView1"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="35dp"-->
+<!--                android:gravity="left"-->
+<!--                android:padding="5dp"-->
+<!--                android:textStyle="bold"-->
+<!--                android:textSize="20dp"-->
+<!--                android:text="ываваыаыаыва" />-->
+
+<!--            <TextView-->
+<!--                android:id="@+id/textView2"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="35dp"-->
+<!--                android:gravity="left"-->
+<!--                android:padding="5dp"-->
+<!--                android:textSize="15dp"-->
+<!--                android:text="ываываыаы" />-->
+<!--        </LinearLayout>-->
+    </RelativeLayout>
 </layout>

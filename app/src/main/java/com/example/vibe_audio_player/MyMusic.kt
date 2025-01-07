@@ -2,7 +2,6 @@ package com.example.vibe_audio_player
 
 import SongRVAdapter
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,7 +27,7 @@ class MyMusic : Fragment() {
 
             binding.viewSwitcher.displayedChild = 1 // Показываем сообщение и кнопку
             binding.addMusicButton.setOnClickListener {
-                Toast.makeText(context, "Добавить музыку", Toast.LENGTH_SHORT).show()
+
             }
         } else {
 
