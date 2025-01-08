@@ -1,6 +1,7 @@
 package com.example.vibe_audio_player
 
 import android.os.Bundle
+import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -16,5 +17,6 @@ class PlayerActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        findViewById<TextView>(R.id.title).text = intent.getStringExtra("song_title")
     }
 }
