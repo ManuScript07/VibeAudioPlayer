@@ -14,29 +14,31 @@ import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.vibe_audio_player.databinding.FragmentMymusicBinding
+import com.example.vibe_audio_player.databinding.SongItemBinding
 import java.io.File
 
 class MyMusic : Fragment() {
 
     private lateinit var binding: FragmentMymusicBinding
+    private lateinit var bindingitem: SongItemBinding
 
     companion object{
-        lateinit var MusicListSA: ArrayList<Song>
+        lateinit var MusicListMM: ArrayList<Song>
     }
 
 
     @RequiresApi(Build.VERSION_CODES.R)
-    @SuppressLint("SetTextI18n")
+    @SuppressLint("SetTextI18n", "ResourceAsColor")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentMymusicBinding.inflate(inflater, container, false)
 
-        MusicListSA = loadTracks()
+        MusicListMM = loadTracks()
 
         // Убедимся, что переключение ViewSwitcher работает корректно
-        if (MusicListSA.isEmpty()) {
+        if (MusicListMM.isEmpty()) {
 
             binding.viewSwitcher.displayedChild = 1 // Показываем сообщение и кнопку
             binding.addMusicButton.setOnClickListener {
@@ -49,21 +51,19 @@ class MyMusic : Fragment() {
             binding.recyclerView.setItemViewCacheSize(13)
             binding.recyclerView.layoutManager = LinearLayoutManager(context)
             binding.recyclerView.adapter = context?.let {
-                SongRVAdapter(it, MusicListSA) { song ->
+                val visibleTracks = if (MusicListMM.size > 4) MusicListMM.subList(0, 4) else MusicListMM
+                SongRVAdapter(it, visibleTracks) { song, position ->
                     //Toast.makeText(context, "Вы выбрали: ${song.title}", Toast.LENGTH_SHORT).show()
+
                     val intent = Intent(context, PlayerActivity::class.java).apply {
-                        putExtra("song_id", song.id)
-                        putExtra("song_title", song.title)
-                        putExtra("song_artist", song.artist)
-                        putExtra("song_album", song.album)
-                        putExtra("song_duration", song.duration)
-                        putExtra("song_path", song.path)
+                        putExtra("position", position)
+                        putExtra("song_class", "MyMusic")
                     }
                     startActivity(intent)
                 }
             }
         }
-        binding.textView2.text = MusicListSA.size.toString()
+        binding.textView2.text = MusicListMM.size.toString()
 
 
         return binding.root
@@ -83,7 +83,7 @@ class MyMusic : Fragment() {
             MediaStore.Audio.Media.DURATION,
             MediaStore.Audio.Media.DATE_ADDED,
             MediaStore.Audio.Media.DATA,
-            MediaStore.Audio.Media.ALBUM_ID
+            MediaStore.Audio.Media.ALBUM_ID,
         )
 
         val cursor = context?.contentResolver?.query(
@@ -103,6 +103,7 @@ class MyMusic : Fragment() {
             val durationIndex = c.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION)
             val dataIndex = c.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA)
             val albumIdIndex = c.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID)
+
             while (c.moveToNext()) {
                 // Извлекаем данные по индексам
                 val id = c.getString(idIndex)

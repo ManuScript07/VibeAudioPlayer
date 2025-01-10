@@ -90,6 +90,7 @@ class MainActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == 13) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                replaceFragment(MyMusic()) // Чтобы треки появились
 //                Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show()
             } else {
 //                Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()

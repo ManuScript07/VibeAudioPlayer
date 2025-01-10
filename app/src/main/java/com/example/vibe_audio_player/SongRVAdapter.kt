@@ -12,8 +12,8 @@ import com.example.vibe_audio_player.databinding.SongItemBinding
 
 class SongRVAdapter(
     private val context: Context,
-    private val songs: ArrayList<Song>,
-    private val onItemClicked: (Song) -> Unit
+    private val songs: MutableList<Song>,
+    private val onItemClicked: (Song, Int) -> Unit
 ) : RecyclerView.Adapter<SongRVAdapter.SongViewHolder>() {
 
     // ViewHolder для работы с song_item.xml
@@ -23,9 +23,9 @@ class SongRVAdapter(
 //        val image = binding.imageView
 //        val duration = binding.textView3
 
-        fun bind(song: Song, onItemClicked: (Song) -> Unit) {
+        fun bind(song: Song, position: Int, onItemClicked: (Song, Int) -> Unit) {
             binding.song = song // Устанавливаем переменную song в макете
-            binding.root.setOnClickListener { onItemClicked(song) }
+            binding.root.setOnClickListener { onItemClicked(song, position) }
             binding.executePendingBindings() // Применяем изменения
 
 
@@ -41,7 +41,7 @@ class SongRVAdapter(
 
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: SongViewHolder, position: Int) {
-        holder.bind(songs[position], onItemClicked)
+        holder.bind(songs[position], position, onItemClicked)
 //        holder.title.text = songs[position].title
 //        holder.albom.text = songs[position].album
 //        holder.duration.text = songs[position].duration.toString()
