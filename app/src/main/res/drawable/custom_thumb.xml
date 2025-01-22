@@ -3,6 +3,6 @@
     android:shape="oval">
     <size
         android:width="12dp"
-        android:height="12dp" />
+        android:height="12dp" /> <!-- Диаметр круга -->
     <solid android:color="@color/purple_500" />
 </shape>
