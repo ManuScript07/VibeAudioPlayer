@@ -40,7 +40,7 @@ class MiniPlayer : Fragment() {
         binding.next.setOnClickListener{
             setSongPosition(increment = true)
             PlayerActivity.musicService!!.createMediaPlayer()
-            Glide.with(this)
+            Glide.with(requireContext())
                 .load(musicListPA[songPosition].artUri)
                 .apply(RequestOptions().placeholder(R.drawable.baseline_music_off_24).centerCrop())
                 .into(binding.image)
@@ -66,7 +66,7 @@ class MiniPlayer : Fragment() {
         if (PlayerActivity.musicService != null) {
             binding.root.visibility = View.VISIBLE
             binding.songName.isSelected = true
-            Glide.with(this)
+            Glide.with(requireContext())
                 .load(musicListPA[songPosition].artUri)
                 .apply(RequestOptions().placeholder(R.drawable.baseline_music_off_24).centerCrop())
                 .into(binding.image)
@@ -80,16 +80,18 @@ class MiniPlayer : Fragment() {
     }
 
     private fun playMusic(){
+        PlayerActivity.isPlaying = true
         PlayerActivity.musicService!!.mediaPlayer!!.start()
         binding.playPause.setIconResource(R.drawable.baseline_pause_24)
         PlayerActivity.binding.next.setIconResource(R.drawable.baseline_pause_24)
-        PlayerActivity.isPlaying = true
+
     }
 
     private fun pauseMusic(){
+        PlayerActivity.isPlaying = false
         PlayerActivity.musicService!!.mediaPlayer!!.pause()
         binding.playPause.setIconResource(R.drawable.baseline_play_arrow_24)
         PlayerActivity.binding.next.setIconResource(R.drawable.baseline_play_arrow_24)
-        PlayerActivity.isPlaying = false
+
     }
 }

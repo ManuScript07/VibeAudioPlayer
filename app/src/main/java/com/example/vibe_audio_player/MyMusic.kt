@@ -52,7 +52,6 @@ class MyMusic : Fragment() {
             binding.recyclerView.adapter = context?.let {
                 val visibleTracks = if (musicListMM.size > 4) musicListMM.subList(0, 4) else musicListMM
                 SongRVAdapter(it, visibleTracks) { song, position ->
-                    //Toast.makeText(context, "Вы выбрали: ${song.title}", Toast.LENGTH_SHORT).show()
                     if (isClickAllowed) {
                         isClickAllowed = false
                         val intent = Intent(context, PlayerActivity::class.java).apply {
