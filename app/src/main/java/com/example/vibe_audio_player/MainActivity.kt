@@ -28,9 +28,6 @@ class MainActivity : AppCompatActivity() {
 
 
         setContentView(binding.root)
-
-
-
         replaceFragment(MyMusic())
         musicListMA = loadTracks()
         binding.bottomNavigationView.setOnItemSelectedListener {
@@ -49,6 +46,7 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
+
 
     // Заменяем фрагмент
     private fun replaceFragment(fragment: Fragment) {

@@ -73,25 +73,26 @@ class MiniPlayer : Fragment() {
             binding.songName.text = musicListPA[songPosition].title
             binding.artistName.text = musicListPA[songPosition].artist
             if (PlayerActivity.isPlaying)
-                binding.playPause.setIconResource(R.drawable.baseline_pause_24)
+                binding.playPause.setImageResource(R.drawable.baseline_pause_24)
+
             else
-                binding.playPause.setIconResource(R.drawable.baseline_play_arrow_24)
+                binding.playPause.setImageResource(R.drawable.baseline_play_arrow_24)
         }
     }
 
     private fun playMusic(){
         PlayerActivity.isPlaying = true
         PlayerActivity.musicService!!.mediaPlayer!!.start()
-        binding.playPause.setIconResource(R.drawable.baseline_pause_24)
-        PlayerActivity.binding.next.setIconResource(R.drawable.baseline_pause_24)
+        binding.playPause.setImageResource(R.drawable.baseline_pause_24)
+        PlayerActivity.binding.next.setImageResource(R.drawable.baseline_pause_24)
 
     }
 
     private fun pauseMusic(){
         PlayerActivity.isPlaying = false
         PlayerActivity.musicService!!.mediaPlayer!!.pause()
-        binding.playPause.setIconResource(R.drawable.baseline_play_arrow_24)
-        PlayerActivity.binding.next.setIconResource(R.drawable.baseline_play_arrow_24)
+        binding.playPause.setImageResource(R.drawable.baseline_play_arrow_24)
+        PlayerActivity.binding.next.setImageResource(R.drawable.baseline_play_arrow_24)
 
     }
 }

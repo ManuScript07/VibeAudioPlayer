@@ -125,7 +125,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
                 binding.seekBarPA.progress = musicService!!.mediaPlayer!!.currentPosition
                 binding.seekBarPA.max = musicService!!.mediaPlayer!!.duration
                 if (!isPlaying)
-                    binding.playPause.setIconResource(R.drawable.baseline_play_arrow_24)
+                    binding.playPause.setImageResource(R.drawable.baseline_play_arrow_24)
             }
         }
         if (musicService != null && !isPlaying)
@@ -186,13 +186,13 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
     }
 
     private fun playMusic(){
-        binding.playPause.setIconResource(R.drawable.baseline_pause_24)
+        binding.playPause.setImageResource(R.drawable.baseline_pause_24)
         isPlaying = true
         musicService!!.mediaPlayer!!.start()
     }
 
     private fun pauseMusic(){
-        binding.playPause.setIconResource(R.drawable.baseline_play_arrow_24)
+        binding.playPause.setImageResource(R.drawable.baseline_play_arrow_24)
         isPlaying = false
         musicService!!.mediaPlayer!!.pause()
     }

@@ -56,10 +56,10 @@ class MyMusic : Fragment() {
                         isClickAllowed = false
                         val intent = Intent(context, PlayerActivity::class.java).apply {
                             if (musicListMM[position].id == PlayerActivity.nowPlayingId)
-                                putExtra("position", PlayerActivity.songPosition)
+                                putExtra("song_class", "MiniPlayer")
                             else
-                                putExtra("position", position)
-                            putExtra("song_class", "MyMusic")
+                                putExtra("song_class", "MyMusic")
+                            putExtra("position", position)
                         }
                         startActivity(intent)
                         binding.root.postDelayed({ isClickAllowed = true }, 500)
@@ -69,7 +69,11 @@ class MyMusic : Fragment() {
         }
         binding.textView2.text = musicListMM.size.toString()
 
+        binding.playList.setOnClickListener{
+
+        }
 
         return binding.root
     }
+    
 }

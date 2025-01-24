@@ -34,7 +34,7 @@ class MusicService: Service() {
             mediaPlayer?.setDataSource(PlayerActivity.musicListPA[PlayerActivity.songPosition].path)
             mediaPlayer?.prepare()
 
-            PlayerActivity.binding.playPause.setIconResource(R.drawable.baseline_pause_24)
+            PlayerActivity.binding.playPause.setImageResource(R.drawable.baseline_pause_24)
             PlayerActivity.binding.start.text =
                 formatDuration(mediaPlayer!!.currentPosition.toLong())
             PlayerActivity.binding.duration.text =
