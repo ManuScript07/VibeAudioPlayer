@@ -6,90 +6,66 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
+import androidx.navigation.ui.setupWithNavController
 import com.example.vibe_audio_player.databinding.ActivityMainBinding
 import java.io.File
 
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var binding : ActivityMainBinding
-    companion object{
-        lateinit var musicListMA: ArrayList<Song>
+
+    private lateinit var binding: ActivityMainBinding
+
+    companion object {
+        var musicListMA: ArrayList<Song> = ArrayList()
     }
+
     @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requestRuntimePermission()
+
         binding = ActivityMainBinding.inflate(layoutInflater)
-
-
         setContentView(binding.root)
-        replaceFragment(MyMusic())
-        musicListMA = loadTracks()
-        binding.bottomNavigationView.setOnItemSelectedListener {
-            when(it.itemId){
-                R.id.my_music -> replaceFragment(MyMusic())
-                R.id.for_you -> replaceFragment(ForYou())
-                R.id.stream -> replaceFragment(Stream())
-                R.id.search -> replaceFragment(Search())
-                R.id.profile -> replaceFragment(Profile())
 
-                else -> {
+        val controller = findNavController(R.id.nav_host_fragment)
+        binding.bottomNavigationView.setupWithNavController(controller)
 
-                }
-            }
-            true
+        // Инициализация списка треков
+        musicListMA = ArrayList()
+
+        if (requestRuntimePermission()) {
+            loadMusicList()
         }
-
     }
 
-
-    // Заменяем фрагмент
-    private fun replaceFragment(fragment: Fragment) {
-        val fragmentManager = supportFragmentManager
-        val fragmentTransaction = fragmentManager.beginTransaction()
-        fragmentTransaction.replace(R.id.frame_layout, fragment)
-        fragmentTransaction.commit()
-    }
-
-
-    // Запрашиваем разрешения
-    private fun requestRuntimePermission() : Boolean {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-            if (ActivityCompat.checkSelfPermission(
-                    this,
-                    android.Manifest.permission.READ_EXTERNAL_STORAGE
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                ActivityCompat.requestPermissions(
-                    this,
-                    arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE),
-                    13
-                )
-                return false
-            }
+    // Метод для проверки и запроса разрешений
+    private fun requestRuntimePermission(): Boolean {
+        val permissions = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE)
         } else {
-            // Android 13 or Higher permission request
-            if (ActivityCompat.checkSelfPermission(
-                    this,
-                    android.Manifest.permission.READ_MEDIA_AUDIO
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                ActivityCompat.requestPermissions(
-                    this,
-                    arrayOf(android.Manifest.permission.READ_MEDIA_AUDIO),
-                    13
-                )
-                return false
-            }
+            arrayOf(android.Manifest.permission.READ_MEDIA_AUDIO)
         }
-        return true
+
+        val isGranted = permissions.all {
+            ActivityCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_GRANTED
+        }
+
+        if (!isGranted) {
+            ActivityCompat.requestPermissions(this, permissions, 13)
+        }
+
+        return isGranted
     }
 
+    @RequiresApi(Build.VERSION_CODES.R)
+    private fun loadMusicList() {
+        musicListMA = loadTracks()
+    }
 
     @RequiresApi(Build.VERSION_CODES.R)
     override fun onRequestPermissionsResult(
@@ -98,23 +74,16 @@ class MainActivity : AppCompatActivity() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
         if (requestCode == 13) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                //replaceFragment(MyMusic()) // Чтобы треки появились
-//                Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show()
+            val allGranted = grantResults.all { it == PackageManager.PERMISSION_GRANTED }
+            if (allGranted) {
+                loadMusicList()
             } else {
-//                Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
-                // Повторный запрос разрешения (опционально)
-                ActivityCompat.requestPermissions(
-                    this,
-                    arrayOf(android.Manifest.permission.READ_MEDIA_AUDIO),
-                    13
-                )
+                Toast.makeText(this, "Разрешения не предоставлены", Toast.LENGTH_SHORT).show()
             }
         }
     }
-
-
 
     @SuppressLint("Recycle", "Range")
     @RequiresApi(Build.VERSION_CODES.R)
@@ -133,7 +102,7 @@ class MainActivity : AppCompatActivity() {
             MediaStore.Audio.Media.ALBUM_ID,
         )
 
-        val cursor = this?.contentResolver?.query(
+        val cursor = contentResolver?.query(
             MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
             projection,
             selection,
@@ -142,7 +111,6 @@ class MainActivity : AppCompatActivity() {
         )
 
         cursor?.use { c ->
-            // Получаем индексы колонок заранее
             val idIndex = c.getColumnIndexOrThrow(MediaStore.Audio.Media._ID)
             val titleIndex = c.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE)
             val albumIndex = c.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM)
@@ -152,7 +120,6 @@ class MainActivity : AppCompatActivity() {
             val albumIdIndex = c.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID)
 
             while (c.moveToNext()) {
-                // Извлекаем данные по индексам
                 val id = c.getString(idIndex)
                 val title = c.getString(titleIndex)
                 val album = c.getString(albumIndex)
@@ -173,7 +140,6 @@ class MainActivity : AppCompatActivity() {
                     artUri = artUri
                 )
 
-                // Проверяем существование файла
                 if (File(song.path).exists()) {
                     tempList.add(song)
                 }
@@ -182,5 +148,5 @@ class MainActivity : AppCompatActivity() {
 
         return tempList
     }
-
 }
+

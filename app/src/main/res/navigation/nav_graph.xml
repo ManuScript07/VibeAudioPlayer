@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/my_music">
+
+    <fragment
+        android:id="@+id/my_music"
+        android:name="com.example.vibe_audio_player.MyMusic"
+        android:label="fragment_mymusic"
+        tools:layout="@layout/fragment_mymusic" >
+        <action
+            android:id="@+id/action_my_music_to_playListFragment"
+            app:destination="@id/playListFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/for_you"
+        android:name="com.example.vibe_audio_player.ForYou"
+        android:label="fragment_foryou"
+        tools:layout="@layout/fragment_foryou" />
+    <fragment
+        android:id="@+id/stream"
+        android:name="com.example.vibe_audio_player.Stream"
+        android:label="fragment_stream"
+        tools:layout="@layout/fragment_stream" />
+    <fragment
+        android:id="@+id/search"
+        android:name="com.example.vibe_audio_player.Search"
+        android:label="fragment_search"
+        tools:layout="@layout/fragment_search" />
+    <fragment
+        android:id="@+id/profile"
+        android:name="com.example.vibe_audio_player.Profile"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile" />
+
+    <fragment
+        android:id="@+id/playListFragment"
+        android:name="com.example.vibe_audio_player.PlayListFragment"
+        android:label="fragment_play_list"
+        tools:layout="@layout/fragment_play_list" >
+        <action
+            android:id="@+id/action_playListFragment_to_my_music"
+            app:destination="@id/my_music" />
+    </fragment>
+</navigation>

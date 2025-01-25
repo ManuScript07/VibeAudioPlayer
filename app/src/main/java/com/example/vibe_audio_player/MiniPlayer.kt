@@ -54,6 +54,7 @@ class MiniPlayer : Fragment() {
             val intent = Intent(requireContext(), PlayerActivity::class.java).apply {
                 putExtra("position", songPosition)
                 putExtra("song_class", "MiniPlayer")
+                putExtra("namePlayList", "")
             }
             startActivity(intent)
         }

@@ -34,6 +34,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
         @SuppressLint("StaticFieldLeak")
         lateinit var binding: ActivityPlayerBinding
         var nowPlayingId: String = ""
+        var namePlayList: String = ""
     }
 
 
@@ -108,6 +109,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
         val song_class = intent.getStringExtra("song_class")
         songPosition = intent.getIntExtra("position", 0)
 
+
         when(song_class){
             "MyMusic" -> {
                 val intent = Intent(this, MusicService::class.java)
@@ -115,8 +117,9 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
                 startService(intent)
                 musicListPA = ArrayList()
                 musicListPA.addAll(MainActivity.musicListMA)
+                namePlayList = "Мои треки"
                 setLayout()
-                binding.namePlaylist.text = "Мои треки"
+
             }
             "MiniPlayer" -> {
                 setLayout()
@@ -128,6 +131,12 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
                     binding.playPause.setImageResource(R.drawable.baseline_play_arrow_24)
             }
         }
+        binding.namePlaylist.text =
+            if (intent.getStringExtra("namePlayList") == "")
+                namePlayList
+            else
+                intent.getStringExtra("namePlayList")
+
         if (musicService != null && !isPlaying)
             playMusic()
     }
@@ -286,4 +295,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
         }
         exitProcess(1)
     }
+
+
 }
+

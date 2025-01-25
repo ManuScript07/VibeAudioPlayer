@@ -10,70 +10,91 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.vibe_audio_player.MainActivity.Companion.musicListMA
 import com.example.vibe_audio_player.databinding.FragmentMymusicBinding
-import com.example.vibe_audio_player.databinding.SongItemBinding
 
 class MyMusic : Fragment() {
 
     private lateinit var binding: FragmentMymusicBinding
-    private lateinit var bindingitem: SongItemBinding
+    private lateinit var adapter: SongRVAdapter
 
     companion object{
-        lateinit var musicListMM: ArrayList<Song>
+        var musicListMM: ArrayList<Song> = ArrayList()
     }
 
     private var isClickAllowed = true
 
     @RequiresApi(Build.VERSION_CODES.R)
-    @SuppressLint("SetTextI18n", "ResourceAsColor")
+    @SuppressLint("SetTextI18n")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentMymusicBinding.inflate(inflater, container, false)
 
-        musicListMM = ArrayList()
-        musicListMM.addAll(MainActivity.musicListMA)
-
-        // Убедимся, что переключение ViewSwitcher работает корректно
-        if (musicListMM.isEmpty()) {
-
-            binding.viewSwitcher.displayedChild = 1 // Показываем сообщение и кнопку
-            binding.addMusicButton.setOnClickListener {
-
-            }
-        } else {
-
-            binding.viewSwitcher.displayedChild = 0 // Показываем RecyclerView
-            binding.recyclerView.setHasFixedSize(true)
-            binding.recyclerView.setItemViewCacheSize(13)
-            binding.recyclerView.layoutManager = LinearLayoutManager(context)
-            binding.recyclerView.adapter = context?.let {
-                val visibleTracks = if (musicListMM.size > 4) musicListMM.subList(0, 4) else musicListMM
-                SongRVAdapter(it, visibleTracks) { song, position ->
-                    if (isClickAllowed) {
-                        isClickAllowed = false
-                        val intent = Intent(context, PlayerActivity::class.java).apply {
-                            if (musicListMM[position].id == PlayerActivity.nowPlayingId)
-                                putExtra("song_class", "MiniPlayer")
-                            else
-                                putExtra("song_class", "MyMusic")
-                            putExtra("position", position)
-                        }
-                        startActivity(intent)
-                        binding.root.postDelayed({ isClickAllowed = true }, 500)
-                    }
-                }
-            }
+        adapter = SongRVAdapter(requireContext(), musicListMM) {song, position ->
+            openPlayerActivity(position)
         }
-        binding.textView2.text = musicListMM.size.toString()
 
-        binding.playList.setOnClickListener{
 
+        binding.recyclerView.apply {
+            setHasFixedSize(true)
+            setItemViewCacheSize(13)
+            layoutManager = LinearLayoutManager(context)
+            adapter = this@MyMusic.adapter
+        }
+
+
+        binding.addMusicButton.setOnClickListener {
+
+        }
+
+        binding.playList.setOnClickListener {
+            findNavController().navigate(R.id.action_my_music_to_playListFragment)
         }
 
         return binding.root
     }
-    
+
+    @SuppressLint("NotifyDataSetChanged", "SetTextI18n")
+    @RequiresApi(Build.VERSION_CODES.R)
+    override fun onResume() {
+        super.onResume()
+
+
+        val updateList = ArrayList(musicListMA.take(4))
+
+        // Проверяем, пустой ли список
+        if (updateList.isEmpty()) {
+            binding.viewSwitcher.displayedChild = 1 // Показываем сообщение
+        } else {
+            binding.viewSwitcher.displayedChild = 0 // Показываем RecyclerView
+            adapter.updateData(updateList)
+        }
+
+        binding.countSongs.text = musicListMA.size.toString()
+    }
+
+    // Функция для открытия PlayerActivity
+    private fun openPlayerActivity(position: Int) {
+        if (isClickAllowed) {
+            isClickAllowed = false
+            val intent = Intent(context, PlayerActivity::class.java).apply {
+                if (musicListMM[position].id == PlayerActivity.nowPlayingId)
+                    putExtra("song_class", "MiniPlayer")
+                else
+                    putExtra("song_class", "MyMusic")
+                putExtra("position", position)
+                putExtra("namePlayList", "Мои треки")
+
+            }
+            startActivity(intent)
+            binding.root.postDelayed({ isClickAllowed = true }, 500)
+        }
+    }
+
+
+
 }
