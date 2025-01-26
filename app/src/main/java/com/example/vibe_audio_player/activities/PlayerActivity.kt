@@ -1,4 +1,4 @@
-package com.example.vibe_audio_player
+package com.example.vibe_audio_player.activities
 
 import android.annotation.SuppressLint
 import android.content.ComponentName
@@ -19,7 +19,14 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.example.vibe_audio_player.R
+import com.example.vibe_audio_player.Song
 import com.example.vibe_audio_player.databinding.ActivityPlayerBinding
+import com.example.vibe_audio_player.formatDuration
+import com.example.vibe_audio_player.fragments.MiniPlayer
+import com.example.vibe_audio_player.fragments.PlayerFragment.Companion.musicService
+import com.example.vibe_audio_player.services.MusicService
+import com.example.vibe_audio_player.setSongPosition
 import kotlin.system.exitProcess
 
 
@@ -30,7 +37,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
         var songPosition: Int  = 0
         //        var mediaPlayer: MediaPlayer? = null
         var isPlaying: Boolean = false
-        var musicService: MusicService? = null
+//        var musicService: MusicService? = null
         @SuppressLint("StaticFieldLeak")
         lateinit var binding: ActivityPlayerBinding
         var nowPlayingId: String = ""
@@ -96,7 +103,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
                 isUserTouching = false
                 // Выполняем seekTo только после завершения перетаскивания
                 seekBar?.progress?.let {
-                    musicService?.mediaPlayer?.seekTo(it)
+                    //musicService?.mediaPlayer?.seekTo(it)
                 }
             }
         })
@@ -123,10 +130,10 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
             }
             "MiniPlayer" -> {
                 setLayout()
-                binding.start.text = formatDuration(musicService!!.mediaPlayer!!.currentPosition.toLong())
-                binding.duration.text = formatDuration(musicService!!.mediaPlayer!!.duration.toLong())
-                binding.seekBarPA.progress = musicService!!.mediaPlayer!!.currentPosition
-                binding.seekBarPA.max = musicService!!.mediaPlayer!!.duration
+//                binding.start.text = formatDuration(musicService!!.mediaPlayer!!.currentPosition.toLong())
+//                binding.duration.text = formatDuration(musicService!!.mediaPlayer!!.duration.toLong())
+//                binding.seekBarPA.progress = musicService!!.mediaPlayer!!.currentPosition
+//                binding.seekBarPA.max = musicService!!.mediaPlayer!!.duration
                 if (!isPlaying)
                     binding.playPause.setImageResource(R.drawable.baseline_play_arrow_24)
             }
@@ -179,17 +186,17 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
 
     private fun createMediaPlayer(){
         try {
-            if (musicService!!.mediaPlayer == null) musicService!!.mediaPlayer = MediaPlayer()
-            musicService!!.mediaPlayer!!.reset()
-            musicService!!.mediaPlayer!!.setDataSource(musicListPA[songPosition].path)
-            musicService!!.mediaPlayer!!.prepare()
-            binding.start.text = formatDuration(musicService!!.mediaPlayer!!.currentPosition.toLong())
-            binding.duration.text = formatDuration(musicService!!.mediaPlayer!!.duration.toLong())
-            binding.seekBarPA.progress = 0
-            binding.seekBarPA.max = musicService!!.mediaPlayer!!.duration
-            musicService!!.mediaPlayer!!.setOnCompletionListener(this)
-            nowPlayingId = musicListPA[songPosition].id
-            playMusic()
+//            if (musicService!!.mediaPlayer == null) musicService!!.mediaPlayer = MediaPlayer()
+//            musicService!!.mediaPlayer!!.reset()
+//            musicService!!.mediaPlayer!!.setDataSource(musicListPA[songPosition].path)
+//            musicService!!.mediaPlayer!!.prepare()
+//            binding.start.text = formatDuration(musicService!!.mediaPlayer!!.currentPosition.toLong())
+//            binding.duration.text = formatDuration(musicService!!.mediaPlayer!!.duration.toLong())
+//            binding.seekBarPA.progress = 0
+//            binding.seekBarPA.max = musicService!!.mediaPlayer!!.duration
+//            musicService!!.mediaPlayer!!.setOnCompletionListener(this)
+//            nowPlayingId = musicListPA[songPosition].id
+//            playMusic()
 
         }catch (e: Exception){Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show()}
     }
@@ -197,13 +204,13 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
     private fun playMusic(){
         binding.playPause.setImageResource(R.drawable.baseline_pause_24)
         isPlaying = true
-        musicService!!.mediaPlayer!!.start()
+//        musicService!!.mediaPlayer!!.start()
     }
 
     private fun pauseMusic(){
         binding.playPause.setImageResource(R.drawable.baseline_play_arrow_24)
         isPlaying = false
-        musicService!!.mediaPlayer!!.pause()
+//        musicService!!.mediaPlayer!!.pause()
     }
 
     private fun previousOrNextSong(increment: Boolean){
@@ -225,7 +232,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
         return retriever.embeddedPicture
     }
 
-    private fun getMusicDetails(contentUri: Uri): Song{
+    private fun getMusicDetails(contentUri: Uri): Song {
         var cursor: Cursor? = null
         try {
             val projection = arrayOf(MediaStore.Audio.Media.DATA, MediaStore.Audio.Media.DURATION)
@@ -290,7 +297,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
         if (musicService != null) {
             //PlayerActivity.musicService!!.audioManager.abandonAudioFocus(PlayerActivity.musicService)
             musicService!!.stopForeground(true)
-            musicService!!.mediaPlayer!!.release()
+//            musicService!!.mediaPlayer!!.release()
             musicService = null
         }
         exitProcess(1)

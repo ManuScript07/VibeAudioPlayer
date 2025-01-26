@@ -1,4 +1,4 @@
-package com.example.vibe_audio_player
+package com.example.vibe_audio_player.activities
 
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
@@ -12,6 +12,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
+import com.example.vibe_audio_player.R
+import com.example.vibe_audio_player.Song
 import com.example.vibe_audio_player.databinding.ActivityMainBinding
 import java.io.File
 

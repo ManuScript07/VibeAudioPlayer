@@ -1,4 +1,4 @@
-
+package com.example.vibe_audio_player.adapters
 import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
@@ -13,11 +13,11 @@ import com.example.vibe_audio_player.formatDuration
 
 class SongRVAdapter(
     private val context: Context,
-    private var songs: MutableList<Song>, // Сделаем список изменяемым
+    private var songs: MutableList<Song>,
     private val onItemClicked: (Song, Int) -> Unit
 ) : RecyclerView.Adapter<SongRVAdapter.SongViewHolder>() {
 
-    // ViewHolder для работы с song_item.xml
+
     class SongViewHolder(val binding: SongItemBinding) : RecyclerView.ViewHolder(binding.root) {
         val title = binding.textView1
         val artist = binding.textView2
@@ -49,7 +49,7 @@ class SongRVAdapter(
 
     override fun getItemCount(): Int = songs.size
 
-    // Новый метод для обновления данных
+
     @SuppressLint("NotifyDataSetChanged")
     fun updateData(newSongs: List<Song>) {
         songs.clear() // Очистка текущего списка

@@ -1,8 +1,6 @@
-package com.example.vibe_audio_player
+package com.example.vibe_audio_player.fragments
 
-import SongRVAdapter
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,7 +10,10 @@ import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.vibe_audio_player.MainActivity.Companion.musicListMA
+import com.example.vibe_audio_player.R
+import com.example.vibe_audio_player.Song
+import com.example.vibe_audio_player.activities.MainActivity.Companion.musicListMA
+import com.example.vibe_audio_player.adapters.SongRVAdapter
 import com.example.vibe_audio_player.databinding.FragmentMymusicBinding
 
 class MyMusic : Fragment() {
@@ -34,7 +35,7 @@ class MyMusic : Fragment() {
     ): View {
         binding = FragmentMymusicBinding.inflate(inflater, container, false)
 
-        adapter = SongRVAdapter(requireContext(), musicListMM) {song, position ->
+        adapter = SongRVAdapter(requireContext(), musicListMM) { song, position ->
             openPlayerActivity(position)
         }
 
@@ -55,6 +56,10 @@ class MyMusic : Fragment() {
             findNavController().navigate(R.id.action_my_music_to_playListFragment)
         }
 
+        binding.goToAllSongs.setOnClickListener{
+            findNavController().navigate(R.id.action_my_music_to_myTracksFragment)
+        }
+
         return binding.root
     }
 
@@ -62,8 +67,7 @@ class MyMusic : Fragment() {
     @RequiresApi(Build.VERSION_CODES.R)
     override fun onResume() {
         super.onResume()
-
-
+        //requireActivity().window?.statusBarColor = 0x000000
         val updateList = ArrayList(musicListMA.take(4))
 
         // Проверяем, пустой ли список
@@ -79,22 +83,33 @@ class MyMusic : Fragment() {
 
     // Функция для открытия PlayerActivity
     private fun openPlayerActivity(position: Int) {
+//        if (isClickAllowed) {
+//            isClickAllowed = false
+//            val intent = Intent(context, PlayerActivity::class.java).apply {
+//                if (musicListMM[position].id == PlayerActivity.nowPlayingId)
+//                    putExtra("song_class", "MiniPlayer")
+//                else
+//                    putExtra("song_class", "MyMusic")
+//                putExtra("position", position)
+//                putExtra("namePlayList", "Мои треки")
+//
+//            }
+//            startActivity(intent)
+//            binding.root.postDelayed({ isClickAllowed = true }, 500)
+//        }
         if (isClickAllowed) {
             isClickAllowed = false
-            val intent = Intent(context, PlayerActivity::class.java).apply {
-                if (musicListMM[position].id == PlayerActivity.nowPlayingId)
-                    putExtra("song_class", "MiniPlayer")
-                else
-                    putExtra("song_class", "MyMusic")
-                putExtra("position", position)
-                putExtra("namePlayList", "Мои треки")
-
+            val bundle = Bundle().apply {
+                putString(
+                    "SONG_CLASS",
+                    if (musicListMM[position].id == PlayerFragment.nowPlayingId) "MiniPlayer" else "MyMusic")
+                putInt("SONG_POSITION", position)
+                putString("NAME_PLAYLIST", "Moи треки")
             }
-            startActivity(intent)
+
+            findNavController().navigate(R.id.action_my_music_to_playerFragment, bundle)
+
             binding.root.postDelayed({ isClickAllowed = true }, 500)
         }
     }
-
-
-
 }

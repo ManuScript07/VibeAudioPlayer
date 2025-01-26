@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".MiniPlayer"
+    tools:context=".fragments.MiniPlayer"
     android:background="@color/purple_200">
     
     <com.google.android.material.imageview.ShapeableImageView
@@ -59,7 +59,10 @@
             android:textStyle="bold"
             android:ellipsize="marquee"
             android:marqueeRepeatLimit="marquee_forever"
-            android:singleLine="true"/>
+            android:singleLine="true"
+            android:scrollHorizontally="true"
+            android:focusable="true"
+            android:focusableInTouchMode="true"/>
 
         <TextView
             android:id="@+id/artistName"

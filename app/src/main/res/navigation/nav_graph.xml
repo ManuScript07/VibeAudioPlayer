@@ -7,42 +7,107 @@
 
     <fragment
         android:id="@+id/my_music"
-        android:name="com.example.vibe_audio_player.MyMusic"
+        android:name="com.example.vibe_audio_player.fragments.MyMusic"
         android:label="fragment_mymusic"
         tools:layout="@layout/fragment_mymusic" >
         <action
             android:id="@+id/action_my_music_to_playListFragment"
             app:destination="@id/playListFragment" />
+        <action
+            android:id="@+id/action_my_music_to_playerFragment"
+            app:destination="@id/playerFragment" />
+        <action
+            android:id="@+id/action_my_music_to_myTracksFragment"
+            app:destination="@id/myTracksFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
 
     <fragment
         android:id="@+id/for_you"
-        android:name="com.example.vibe_audio_player.ForYou"
+        android:name="com.example.vibe_audio_player.fragments.ForYou"
         android:label="fragment_foryou"
         tools:layout="@layout/fragment_foryou" />
     <fragment
         android:id="@+id/stream"
-        android:name="com.example.vibe_audio_player.Stream"
+        android:name="com.example.vibe_audio_player.fragments.Stream"
         android:label="fragment_stream"
         tools:layout="@layout/fragment_stream" />
     <fragment
         android:id="@+id/search"
-        android:name="com.example.vibe_audio_player.Search"
+        android:name="com.example.vibe_audio_player.fragments.Search"
         android:label="fragment_search"
         tools:layout="@layout/fragment_search" />
     <fragment
         android:id="@+id/profile"
-        android:name="com.example.vibe_audio_player.Profile"
+        android:name="com.example.vibe_audio_player.fragments.Profile"
         android:label="fragment_profile"
         tools:layout="@layout/fragment_profile" />
 
     <fragment
         android:id="@+id/playListFragment"
-        android:name="com.example.vibe_audio_player.PlayListFragment"
+        android:name="com.example.vibe_audio_player.fragments.PlayListFragment"
         android:label="fragment_play_list"
         tools:layout="@layout/fragment_play_list" >
         <action
             android:id="@+id/action_playListFragment_to_my_music"
             app:destination="@id/my_music" />
+    </fragment>
+    <fragment
+        android:id="@+id/playerFragment"
+        android:name="com.example.vibe_audio_player.fragments.PlayerFragment"
+        android:label="fragment_player"
+        tools:layout="@layout/fragment_player" >
+        <action
+            android:id="@+id/action_playerFragment_to_my_music"
+            app:destination="@id/my_music"/>
+        <argument
+            android:name="SONG_ClASS"
+            app:argType="string"
+            android:defaultValue="Unknown"/>
+        <argument
+            android:name="SONG_POSITION"
+            app:argType="integer"
+            android:defaultValue="0"/>
+        <argument
+            android:name="NAME_PLAYLIST"
+            app:argType="string"
+            android:defaultValue=""/>
+        <action
+            android:id="@+id/action_playerFragment_to_miniPlayer"
+            app:destination="@id/miniPlayer" />
+    </fragment>
+    <fragment
+        android:id="@+id/myTracksFragment"
+        android:name="com.example.vibe_audio_player.fragments.MyTracksFragment"
+        android:label="fragment_my_tracks"
+        tools:layout="@layout/fragment_my_tracks" >
+        <action
+            android:id="@+id/action_myTracksFragment_to_my_music"
+            app:destination="@id/my_music" />
+    </fragment>
+    <fragment
+        android:id="@+id/miniPlayer"
+        android:name="com.example.vibe_audio_player.fragments.MiniPlayer"
+        android:label="fragment_mini_player"
+        tools:layout="@layout/fragment_mini_player" >
+        <action
+            android:id="@+id/action_miniPlayer_to_playerFragment"
+            app:destination="@id/playerFragment" />
+
+        <argument
+            android:name="SONG_ClASS"
+            app:argType="string"
+            android:defaultValue="Unknown"/>
+        <argument
+            android:name="SONG_POSITION"
+            app:argType="integer"
+            android:defaultValue="0"/>
+        <argument
+            android:name="NAME_PLAYLIST"
+            app:argType="string"
+            android:defaultValue=""/>
     </fragment>
 </navigation>

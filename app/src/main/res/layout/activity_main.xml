@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".MainActivity">
+    tools:context=".activities.MainActivity">
 
 
     <fragment
@@ -25,10 +25,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:name="com.example.vibe_audio_player.MiniPlayer"
+        android:name="com.example.vibe_audio_player.fragments.MiniPlayer"
         tools:layout="@layout/fragment_mini_player"
         app:layout_constraintBottom_toTopOf="@id/bottomNavigationView"
-        android:visibility="visible"
+        android:visibility="gone"
         tools:ignore="MissingConstraints"/>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
