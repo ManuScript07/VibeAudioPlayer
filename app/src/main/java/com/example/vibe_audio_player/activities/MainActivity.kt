@@ -1,30 +1,43 @@
 package com.example.vibe_audio_player.activities
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.view.View
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import com.example.vibe_audio_player.AboutArtistFragment
 import com.example.vibe_audio_player.R
 import com.example.vibe_audio_player.Song
+import com.example.vibe_audio_player.activities.PlayerActivity.Companion.musicListPA
+import com.example.vibe_audio_player.activities.PlayerActivity.Companion.songPosition
 import com.example.vibe_audio_player.databinding.ActivityMainBinding
+import com.example.vibe_audio_player.setSongPosition
 import java.io.File
 
 
 class MainActivity : AppCompatActivity() {
 
 
-    private lateinit var binding: ActivityMainBinding
 
+    private lateinit var resultLauncher: ActivityResultLauncher<Intent>
     companion object {
         var musicListMA: ArrayList<Song> = ArrayList()
+        @SuppressLint("StaticFieldLeak")
+        lateinit var binding: ActivityMainBinding
     }
 
     @RequiresApi(Build.VERSION_CODES.R)
@@ -33,6 +46,49 @@ class MainActivity : AppCompatActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+
+        binding.playPause.setOnClickListener {
+            if (PlayerActivity.isPlaying)
+                pauseMusic()
+            else
+                playMusic()
+        }
+
+        binding.next.setOnClickListener {
+            setSongPosition(increment = true)
+            PlayerActivity.musicService!!.createMediaPlayer()
+            Glide.with(this)
+                .load(musicListPA[songPosition].artUri)
+                .apply(RequestOptions().placeholder(R.drawable.baseline_music_off_24).centerCrop())
+                .into(binding.image)
+
+            binding.songName.text = musicListPA[songPosition].title
+            binding.artistName.text = musicListPA[songPosition].artist
+            playMusic()
+        }
+
+        binding.miniPlayer.setOnClickListener {
+            val intent = Intent(this, PlayerActivity::class.java).apply {
+                putExtra("position", songPosition)
+                putExtra("song_class", "MiniPlayer")
+                putExtra("namePlayList", "")
+            }
+            resultLauncher.launch(intent)
+        }
+
+
+        resultLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                if (result.resultCode == RESULT_OK) {
+                    val data = result.data?.getStringExtra("artist")
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.nav_host_fragment, AboutArtistFragment())
+                        .addToBackStack(null)
+                        .commit()
+                }
+            }
+
 
         val controller = findNavController(R.id.nav_host_fragment)
         binding.bottomNavigationView.setupWithNavController(controller)
@@ -44,13 +100,51 @@ class MainActivity : AppCompatActivity() {
             loadMusicList()
         }
     }
+    override fun onResume() {
+        super.onResume()
+        if (PlayerActivity.musicService != null) {
+            binding.miniPlayer.visibility = View.VISIBLE
+            binding.songName.isSelected = true
+            Glide.with(this)
+                .load(musicListPA[songPosition].artUri)
+                .apply(RequestOptions().placeholder(R.drawable.baseline_music_off_24).centerCrop())
+                .into(binding.image)
+            binding.songName.text = musicListPA[songPosition].title
+            binding.artistName.text = musicListPA[songPosition].artist
+            if (PlayerActivity.isPlaying)
+                binding.playPause.setImageResource(R.drawable.baseline_pause_24)
+
+            else
+                binding.playPause.setImageResource(R.drawable.baseline_play_arrow_24)
+        }
+    }
+
+
+    private fun playMusic(){
+        PlayerActivity.isPlaying = true
+        PlayerActivity.musicService!!.mediaPlayer!!.start()
+        binding.playPause.setImageResource(R.drawable.baseline_pause_24)
+        PlayerActivity.binding.next.setImageResource(R.drawable.baseline_pause_24)
+
+    }
+
+    private fun pauseMusic(){
+        PlayerActivity.isPlaying = false
+        PlayerActivity.musicService!!.mediaPlayer!!.pause()
+        binding.playPause.setImageResource(R.drawable.baseline_play_arrow_24)
+        PlayerActivity.binding.next.setImageResource(R.drawable.baseline_play_arrow_24)
+    }
+
+
+
+
 
     // Метод для проверки и запроса разрешений
     private fun requestRuntimePermission(): Boolean {
         val permissions = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-            arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE)
+            arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
         } else {
-            arrayOf(android.Manifest.permission.READ_MEDIA_AUDIO)
+            arrayOf(Manifest.permission.READ_MEDIA_AUDIO)
         }
 
         val isGranted = permissions.all {

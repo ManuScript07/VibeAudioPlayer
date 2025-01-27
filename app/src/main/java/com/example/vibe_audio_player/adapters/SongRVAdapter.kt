@@ -3,6 +3,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -22,6 +23,8 @@ class SongRVAdapter(
         val title = binding.textView1
         val artist = binding.textView2
         val duration = binding.textView3
+        val menu = binding.menu
+        val root = binding.root
 
         fun bind(song: Song, position: Int, onItemClicked: (Song, Int) -> Unit) {
             binding.root.setOnClickListener { onItemClicked(song, position) }
@@ -41,11 +44,28 @@ class SongRVAdapter(
         holder.title.text = songs[position].title
         holder.artist.text = songs[position].artist
         holder.duration.text = formatDuration(songs[position].duration)
+        holder.menu.setOnClickListener{
+            Toast.makeText(context, position.toString(), Toast.LENGTH_SHORT).show()
+        }
         Glide.with(context)
             .load(songs[position].artUri)
             .apply(RequestOptions().placeholder(R.drawable.baseline_music_off_24).centerCrop())
             .into(holder.binding.imageView)
+//
+//        holder.root.setOnClickListener {
+//            when {
+//                songs[position].id == PlayerActivity.nowPlayingId -> sendIntent(
+//                    "MiniPlayer",
+//                    PlayerActivity.songPosition
+//                )
+//
+//                else -> sendIntent("SongRVAdapter", position)
+//            }
+//        }
+
     }
+
+
 
     override fun getItemCount(): Int = songs.size
 
@@ -56,4 +76,18 @@ class SongRVAdapter(
         songs.addAll(newSongs) // Добавление новых данных
         notifyDataSetChanged() // Обновление адаптера
     }
+
+//    private fun sendIntent(clss: String, position: Int, namePlayList: String = "Мои треки"){
+//        val intent = Intent(context, PlayerActivity::class.java).apply{
+//            putExtra("position", position)
+//            putExtra("song_class", clss)
+//            putExtra("namePlayList", namePlayList)
+//        }
+//
+//
+//        ContextCompat.startActivity(context, intent, null)
+//    }
 }
+
+
+

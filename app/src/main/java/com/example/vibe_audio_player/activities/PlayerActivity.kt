@@ -1,6 +1,7 @@
 package com.example.vibe_audio_player.activities
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
@@ -23,8 +24,6 @@ import com.example.vibe_audio_player.R
 import com.example.vibe_audio_player.Song
 import com.example.vibe_audio_player.databinding.ActivityPlayerBinding
 import com.example.vibe_audio_player.formatDuration
-import com.example.vibe_audio_player.fragments.MiniPlayer
-import com.example.vibe_audio_player.fragments.PlayerFragment.Companion.musicService
 import com.example.vibe_audio_player.services.MusicService
 import com.example.vibe_audio_player.setSongPosition
 import kotlin.system.exitProcess
@@ -35,9 +34,10 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
     companion object{
         lateinit var musicListPA: ArrayList<Song>
         var songPosition: Int  = 0
-        //        var mediaPlayer: MediaPlayer? = null
+        var songClass: String = ""
+//        var mediaPlayer: MediaPlayer? = null
         var isPlaying: Boolean = false
-//        var musicService: MusicService? = null
+        var musicService: MusicService? = null
         @SuppressLint("StaticFieldLeak")
         lateinit var binding: ActivityPlayerBinding
         var nowPlayingId: String = ""
@@ -103,21 +103,35 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
                 isUserTouching = false
                 // Выполняем seekTo только после завершения перетаскивания
                 seekBar?.progress?.let {
-                    //musicService?.mediaPlayer?.seekTo(it)
+                    musicService?.mediaPlayer?.seekTo(it)
                 }
             }
         })
         binding.back.setOnClickListener{
             finish()
         }
+
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.artist.setOnClickListener {
+            val intent = Intent().apply {
+                putExtra("artist", binding.artist.text) // Передача данных обратно
+            }
+
+            setResult(Activity.RESULT_OK, intent) // Устанавливаем результат
+            finish()
+        }
     }
 
     private fun initializeLayout(){
-        val song_class = intent.getStringExtra("song_class")
+        songClass = intent.getStringExtra("song_class") ?: ""
         songPosition = intent.getIntExtra("position", 0)
 
 
-        when(song_class){
+        when(songClass){
             "MyMusic" -> {
                 val intent = Intent(this, MusicService::class.java)
                 bindService(intent, this, BIND_AUTO_CREATE)
@@ -126,14 +140,16 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
                 musicListPA.addAll(MainActivity.musicListMA)
                 namePlayList = "Мои треки"
                 setLayout()
+                if (musicService != null && !isPlaying)
+                    playMusic()
 
             }
             "MiniPlayer" -> {
                 setLayout()
-//                binding.start.text = formatDuration(musicService!!.mediaPlayer!!.currentPosition.toLong())
-//                binding.duration.text = formatDuration(musicService!!.mediaPlayer!!.duration.toLong())
-//                binding.seekBarPA.progress = musicService!!.mediaPlayer!!.currentPosition
-//                binding.seekBarPA.max = musicService!!.mediaPlayer!!.duration
+                binding.start.text = formatDuration(musicService!!.mediaPlayer!!.currentPosition.toLong())
+                binding.duration.text = formatDuration(musicService!!.mediaPlayer!!.duration.toLong())
+                binding.seekBarPA.progress = musicService!!.mediaPlayer!!.currentPosition
+                binding.seekBarPA.max = musicService!!.mediaPlayer!!.duration
                 if (!isPlaying)
                     binding.playPause.setImageResource(R.drawable.baseline_play_arrow_24)
             }
@@ -144,8 +160,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
             else
                 intent.getStringExtra("namePlayList")
 
-        if (musicService != null && !isPlaying)
-            playMusic()
+
     }
 
 
@@ -186,17 +201,17 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
 
     private fun createMediaPlayer(){
         try {
-//            if (musicService!!.mediaPlayer == null) musicService!!.mediaPlayer = MediaPlayer()
-//            musicService!!.mediaPlayer!!.reset()
-//            musicService!!.mediaPlayer!!.setDataSource(musicListPA[songPosition].path)
-//            musicService!!.mediaPlayer!!.prepare()
-//            binding.start.text = formatDuration(musicService!!.mediaPlayer!!.currentPosition.toLong())
-//            binding.duration.text = formatDuration(musicService!!.mediaPlayer!!.duration.toLong())
-//            binding.seekBarPA.progress = 0
-//            binding.seekBarPA.max = musicService!!.mediaPlayer!!.duration
-//            musicService!!.mediaPlayer!!.setOnCompletionListener(this)
-//            nowPlayingId = musicListPA[songPosition].id
-//            playMusic()
+            if (musicService!!.mediaPlayer == null) musicService!!.mediaPlayer = MediaPlayer()
+            musicService!!.mediaPlayer!!.reset()
+            musicService!!.mediaPlayer!!.setDataSource(musicListPA[songPosition].path)
+            musicService!!.mediaPlayer!!.prepare()
+            binding.start.text = formatDuration(musicService!!.mediaPlayer!!.currentPosition.toLong())
+            binding.duration.text = formatDuration(musicService!!.mediaPlayer!!.duration.toLong())
+            binding.seekBarPA.progress = 0
+            binding.seekBarPA.max = musicService!!.mediaPlayer!!.duration
+            musicService!!.mediaPlayer!!.setOnCompletionListener(this)
+            nowPlayingId = musicListPA[songPosition].id
+            playMusic()
 
         }catch (e: Exception){Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show()}
     }
@@ -204,13 +219,13 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
     private fun playMusic(){
         binding.playPause.setImageResource(R.drawable.baseline_pause_24)
         isPlaying = true
-//        musicService!!.mediaPlayer!!.start()
+        musicService!!.mediaPlayer!!.start()
     }
 
     private fun pauseMusic(){
         binding.playPause.setImageResource(R.drawable.baseline_play_arrow_24)
         isPlaying = false
-//        musicService!!.mediaPlayer!!.pause()
+        musicService!!.mediaPlayer!!.pause()
     }
 
     private fun previousOrNextSong(increment: Boolean){
@@ -280,12 +295,12 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
         createMediaPlayer()
         setLayout()
 
-        MiniPlayer.binding.songName.isSelected = true
+        MainActivity.binding.songName.isSelected = true
         Glide.with(applicationContext)
             .load(musicListPA[songPosition].artUri)
             .apply(RequestOptions().placeholder(R.drawable.baseline_music_off_24).centerCrop())
-            .into(MiniPlayer.binding.image)
-        MiniPlayer.binding.songName.text = musicListPA[songPosition].title
+            .into(MainActivity.binding.image)
+        MainActivity.binding.songName.text = musicListPA[songPosition].title
     }
 
     override fun onDestroy() {
@@ -296,8 +311,8 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
     fun exitApplication() {
         if (musicService != null) {
             //PlayerActivity.musicService!!.audioManager.abandonAudioFocus(PlayerActivity.musicService)
-            musicService!!.stopForeground(true)
-//            musicService!!.mediaPlayer!!.release()
+//            musicService!!.stopForeground(true)
+            musicService!!.mediaPlayer!!.release()
             musicService = null
         }
         exitProcess(1)

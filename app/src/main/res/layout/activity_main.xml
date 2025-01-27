@@ -20,16 +20,82 @@
         app:navGraph="@navigation/nav_graph">
     </fragment>
 
-    <androidx.fragment.app.FragmentContainerView
+    <RelativeLayout
         android:id="@+id/miniPlayer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:name="com.example.vibe_audio_player.fragments.MiniPlayer"
-        tools:layout="@layout/fragment_mini_player"
         app:layout_constraintBottom_toTopOf="@id/bottomNavigationView"
-        android:visibility="gone"
-        tools:ignore="MissingConstraints"/>
+        tools:ignore="MissingConstraints"
+        android:background="@color/purple_200"
+        android:visibility="invisible">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/image"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginVertical="5dp"
+            app:shapeAppearanceOverlay="@style/curved"
+            android:src="@drawable/baseline_music_off_24"/>
+
+        <ImageButton
+            android:id="@+id/next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="10dp"
+            android:padding="10dp"
+            android:background="@drawable/rounded_button_background"
+            android:src="@drawable/baseline_skip_next_24"
+            app:tint="@color/black" />
+
+
+        <ImageButton
+            android:id="@+id/playPause"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toStartOf="@+id/next"
+            android:layout_marginHorizontal="5dp"
+            android:padding="10dp"
+            android:background="@drawable/rounded_button_background"
+            android:src="@drawable/baseline_play_arrow_24"
+            app:tint="@color/black" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_toStartOf="@id/playPause"
+            android:layout_toEndOf="@id/image"
+            android:layout_marginVertical="10dp"
+            android:gravity="center"
+            android:orientation="vertical">
+        <TextView
+            android:id="@+id/songName"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:text="Название песни"
+            android:textSize="20sp"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:singleLine="true"
+            android:scrollHorizontally="true"
+            android:focusable="true"
+            android:focusableInTouchMode="true"/>
+
+        <TextView
+            android:id="@+id/artistName"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:text="Имя артиста"
+            android:textSize="15sp"
+            android:textColor="@color/black" />
+        </LinearLayout>
+    </RelativeLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"
@@ -40,6 +106,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:menu="@menu/bottom_nav"
         android:background="@color/white">
-
     </com.google.android.material.bottomnavigation.BottomNavigationView>
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

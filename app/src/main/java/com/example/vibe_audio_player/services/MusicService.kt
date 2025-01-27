@@ -7,10 +7,9 @@ import android.os.Binder
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
-import android.widget.Toast
 import com.example.vibe_audio_player.R
+import com.example.vibe_audio_player.activities.PlayerActivity
 import com.example.vibe_audio_player.formatDuration
-import com.example.vibe_audio_player.fragments.PlayerFragment
 
 class MusicService: Service() {
 
@@ -35,19 +34,18 @@ class MusicService: Service() {
         try {
             if (mediaPlayer == null) mediaPlayer = MediaPlayer()
             mediaPlayer?.reset()
-            mediaPlayer?.setDataSource(PlayerFragment.musicListPF[PlayerFragment.songPosition].path)
+            mediaPlayer?.setDataSource(PlayerActivity.musicListPA[PlayerActivity.songPosition].path)
             mediaPlayer?.prepare()
 
-            PlayerFragment.binding.playPause.setImageResource(R.drawable.baseline_pause_24)
-            PlayerFragment.binding.start.text =
+            PlayerActivity.binding.playPause.setImageResource(R.drawable.baseline_pause_24)
+            PlayerActivity.binding.start.text =
                 formatDuration(mediaPlayer!!.currentPosition.toLong())
-            Toast.makeText(this, PlayerFragment.binding.start.text.toString(), Toast.LENGTH_SHORT).show()
-            PlayerFragment.binding.duration.text =
+            PlayerActivity.binding.duration.text =
                 formatDuration(mediaPlayer!!.duration.toLong())
-            PlayerFragment.binding.seekBar.progress = 0
-            PlayerFragment.binding.seekBar.max = mediaPlayer!!.duration
+            PlayerActivity.binding.seekBarPA.progress = 0
+            PlayerActivity.binding.seekBarPA.max = mediaPlayer!!.duration
 
-            PlayerFragment.nowPlayingId = PlayerFragment.musicListPF[PlayerFragment.songPosition].id
+            PlayerActivity.nowPlayingId = PlayerActivity.musicListPA[PlayerActivity.songPosition].id
 
         } catch (e: Exception) {
             return
@@ -56,9 +54,9 @@ class MusicService: Service() {
 
     fun seekBarSetup() {
         runnable = Runnable {
-            if (!PlayerFragment.binding.seekBar.isPressed) { // Обновляем только если пользователь не трогает SeekBar
-                PlayerFragment.binding.start.text = formatDuration(mediaPlayer!!.currentPosition.toLong())
-                PlayerFragment.binding.seekBar.progress = mediaPlayer!!.currentPosition
+            if (!PlayerActivity.binding.seekBarPA.isPressed) { // Обновляем только если пользователь не трогает SeekBar
+                PlayerActivity.binding.start.text = formatDuration(mediaPlayer!!.currentPosition.toLong())
+                PlayerActivity.binding.seekBarPA.progress = mediaPlayer!!.currentPosition
             }
             Handler(Looper.getMainLooper()).postDelayed(runnable, 500) // Увеличиваем интервал для снижения нагрузки
         }
