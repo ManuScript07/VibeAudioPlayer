@@ -1,9 +1,10 @@
 package com.example.vibe_audio_player
 
 import android.annotation.SuppressLint
-import com.example.vibe_audio_player.activities.PlayerActivity.Companion.musicListPA
-import com.example.vibe_audio_player.activities.PlayerActivity.Companion.songPosition
-
+//import com.example.vibe_audio_player.activities.PlayerActivity.Companion.musicListPA
+//import com.example.vibe_audio_player.activities.PlayerActivity.Companion.songPosition
+import com.example.vibe_audio_player.fragments.PlayerFragment.Companion.musicListPF
+import com.example.vibe_audio_player.fragments.PlayerFragment.Companion.songPosition
 
 
 data class Song(
@@ -24,7 +25,7 @@ fun formatDuration(duration: Long): String {
 }
 
 fun setSongPosition(increment: Boolean){
-    val length: Int = musicListPA.size
+    val length: Int = musicListPF.size
     if(increment) {
         songPosition = (songPosition + 1) % length
     }

@@ -3,12 +3,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AboutArtistFragment">
+    tools:context=".fragments.AboutArtistFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView
+        android:id="@+id/artist"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:textSize="30dp"
+        android:gravity="center"
         android:text="@string/hello_blank_fragment" />
 
 </FrameLayout>

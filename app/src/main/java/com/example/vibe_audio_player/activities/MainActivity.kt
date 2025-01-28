@@ -2,7 +2,6 @@ package com.example.vibe_audio_player.activities
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
@@ -10,8 +9,6 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.view.View
 import android.widget.Toast
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -19,12 +16,13 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.example.vibe_audio_player.AboutArtistFragment
 import com.example.vibe_audio_player.R
 import com.example.vibe_audio_player.Song
-import com.example.vibe_audio_player.activities.PlayerActivity.Companion.musicListPA
-import com.example.vibe_audio_player.activities.PlayerActivity.Companion.songPosition
 import com.example.vibe_audio_player.databinding.ActivityMainBinding
+import com.example.vibe_audio_player.fragments.PlayerFragment
+import com.example.vibe_audio_player.fragments.PlayerFragment.Companion.musicListPF
+import com.example.vibe_audio_player.fragments.PlayerFragment.Companion.songPosition
+import com.example.vibe_audio_player.fragments.PlayerFragmentDirections
 import com.example.vibe_audio_player.setSongPosition
 import java.io.File
 
@@ -33,7 +31,7 @@ class MainActivity : AppCompatActivity() {
 
 
 
-    private lateinit var resultLauncher: ActivityResultLauncher<Intent>
+//    private lateinit var resultLauncher: ActivityResultLauncher<Intent>
     companion object {
         var musicListMA: ArrayList<Song> = ArrayList()
         @SuppressLint("StaticFieldLeak")
@@ -49,49 +47,56 @@ class MainActivity : AppCompatActivity() {
 
 
         binding.playPause.setOnClickListener {
-            if (PlayerActivity.isPlaying)
+            if (PlayerFragment.isPlaying)
                 pauseMusic()
             else
                 playMusic()
         }
 
+
         binding.next.setOnClickListener {
             setSongPosition(increment = true)
-            PlayerActivity.musicService!!.createMediaPlayer()
+            PlayerFragment.musicService!!.createMediaPlayer()
             Glide.with(this)
-                .load(musicListPA[songPosition].artUri)
+                .load(musicListPF[songPosition].artUri)
                 .apply(RequestOptions().placeholder(R.drawable.baseline_music_off_24).centerCrop())
                 .into(binding.image)
 
-            binding.songName.text = musicListPA[songPosition].title
-            binding.artistName.text = musicListPA[songPosition].artist
+            binding.songName.text = musicListPF[songPosition].title
+            binding.artistName.text = musicListPF[songPosition].artist
             playMusic()
         }
 
         binding.miniPlayer.setOnClickListener {
-            val intent = Intent(this, PlayerActivity::class.java).apply {
-                putExtra("position", songPosition)
-                putExtra("song_class", "MiniPlayer")
-                putExtra("namePlayList", "")
-            }
-            resultLauncher.launch(intent)
+            val action = PlayerFragmentDirections.actionGlobalPlayerFragment(
+                SONGCLASS = "MiniPlayer",
+                SONGPOSITION = songPosition,
+                NAMEPLAYLIST = "Мои треки"
+            )
+            findNavController(R.id.nav_host_fragment).navigate(action)
         }
-
-
-        resultLauncher =
-            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-                if (result.resultCode == RESULT_OK) {
-                    val data = result.data?.getStringExtra("artist")
-                    supportFragmentManager.beginTransaction()
-                        .replace(R.id.nav_host_fragment, AboutArtistFragment())
-                        .addToBackStack(null)
-                        .commit()
-                }
-            }
 
 
         val controller = findNavController(R.id.nav_host_fragment)
         binding.bottomNavigationView.setupWithNavController(controller)
+            controller.addOnDestinationChangedListener { _, destination, _ ->
+                when (destination.id) {
+                    R.id.playerFragment -> {
+                        binding.bottomNavigationView.visibility = View.GONE
+                        binding.bottomNavigationView.animate()
+                            .translationY(binding.bottomNavigationView.height.toFloat())
+                            .setDuration(300)
+                            .start()
+                    }
+                    else -> {
+                        binding.bottomNavigationView.visibility = View.VISIBLE
+                        binding.bottomNavigationView.animate()
+                            .translationY(0f)
+                            .setDuration(300)
+                            .start()
+                    }
+                }
+            }
 
         // Инициализация списка треков
         musicListMA = ArrayList()
@@ -100,18 +105,19 @@ class MainActivity : AppCompatActivity() {
             loadMusicList()
         }
     }
+
     override fun onResume() {
         super.onResume()
-        if (PlayerActivity.musicService != null) {
+        if (PlayerFragment.musicService != null) {
             binding.miniPlayer.visibility = View.VISIBLE
             binding.songName.isSelected = true
             Glide.with(this)
-                .load(musicListPA[songPosition].artUri)
+                .load(musicListPF[songPosition].artUri)
                 .apply(RequestOptions().placeholder(R.drawable.baseline_music_off_24).centerCrop())
                 .into(binding.image)
-            binding.songName.text = musicListPA[songPosition].title
-            binding.artistName.text = musicListPA[songPosition].artist
-            if (PlayerActivity.isPlaying)
+            binding.songName.text = musicListPF[songPosition].title
+            binding.artistName.text = musicListPF[songPosition].artist
+            if (PlayerFragment.isPlaying)
                 binding.playPause.setImageResource(R.drawable.baseline_pause_24)
 
             else
@@ -121,18 +127,19 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun playMusic(){
-        PlayerActivity.isPlaying = true
-        PlayerActivity.musicService!!.mediaPlayer!!.start()
+        PlayerFragment.isPlaying = true
+        PlayerFragment.musicService!!.mediaPlayer!!.start()
         binding.playPause.setImageResource(R.drawable.baseline_pause_24)
-        PlayerActivity.binding.next.setImageResource(R.drawable.baseline_pause_24)
+        PlayerFragment.binding.next.setImageResource(R.drawable.baseline_pause_24)
 
     }
 
     private fun pauseMusic(){
-        PlayerActivity.isPlaying = false
-        PlayerActivity.musicService!!.mediaPlayer!!.pause()
+        PlayerFragment.isPlaying = false
+        PlayerFragment.musicService!!.mediaPlayer!!.pause()
         binding.playPause.setImageResource(R.drawable.baseline_play_arrow_24)
-        PlayerActivity.binding.next.setImageResource(R.drawable.baseline_play_arrow_24)
+        PlayerFragment.binding.next.setImageResource(R.drawable.baseline_play_arrow_24)
+
     }
 
 
