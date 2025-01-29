@@ -133,11 +133,16 @@ class PlayerFragment: Fragment(), ServiceConnection, MediaPlayer.OnCompletionLis
         })
 
         binding.artist.setOnClickListener{
-            //Toast.makeText(requireContext(), binding.artist.text.toString(), Toast.LENGTH_SHORT).show()
+            val navController = findNavController()
+
+            // Сначала полностью убираем PlayerFragment из стека
+
+            // Затем переходим в AboutArtistFragment
             val action = PlayerFragmentDirections.actionPlayerFragmentToAboutArtistFragment(
                 ARIST = binding.artist.text.toString()
             )
-            findNavController().navigate(action)
+            navController.navigate(action)
+
         }
 
         binding.back.setOnClickListener{
