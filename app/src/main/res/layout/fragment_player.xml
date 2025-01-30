@@ -8,14 +8,15 @@
     tools:context=".fragments.PlayerFragment"
     android:orientation="vertical"
     android:gravity="center|top"
-    android:background="@color/white">
+    android:background="@color/black">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:layout_marginTop="32dp">
 
         <ImageButton
             android:id="@+id/back"
@@ -23,38 +24,40 @@
             android:layout_height="match_parent"
             android:src="@drawable/baseline_arrow_back_24"
             android:background="@android:color/transparent"
-            android:layout_marginStart="5dp"
-            app:tint="@color/black"
+            android:layout_marginStart="0dp"
+            app:tint="@color/white"
             android:layout_weight="1"
-            android:paddingLeft="-90dp"/>
+            android:paddingLeft="-75dp"
+            android:layout_marginTop="-15dp"/>
 
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:gravity="center"
+            android:gravity="top"
+            android:layout_marginTop="-15dp"
             android:layout_weight="0">
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:text="Плейлист"
-                android:textSize="20sp"
+                android:textSize="15sp"
                 android:gravity="center"
-                android:layout_weight="1"
+                android:layout_weight="0"
                 tools:ignore="NestedWeights"
-                android:textColor="@color/black"/>
+                android:textColor="@color/white"/>
 
             <TextView
                 android:id="@+id/namePlaylist"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:text="Плеер"
-                android:textSize="30sp"
+                android:textSize="25sp"
                 android:gravity="center"
-                android:layout_weight="1"
+                android:layout_weight="0"
                 tools:ignore="NestedWeights"
-                android:textColor="@color/black"/>
+                android:textColor="@color/white" />
         </LinearLayout>
 
         <ImageButton
@@ -62,10 +65,11 @@
             android:layout_height="match_parent"
             android:src="@drawable/baseline_share_24"
             android:background="@android:color/transparent"
-            android:layout_marginEnd="5dp"
-            app:tint="@color/black"
+            android:layout_marginEnd="0dp"
+            app:tint="@color/white"
             android:layout_weight="1"
-            android:paddingEnd="-90dp"/>
+            android:paddingEnd="-75dp"
+            android:layout_marginTop="-15dp"/>
     </LinearLayout>
 
     <com.google.android.material.imageview.ShapeableImageView
@@ -83,11 +87,18 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
         android:text="Название песни"
-        android:textSize="25sp"
+        android:textSize="20sp"
         android:textStyle="bold"
         android:gravity="center"
         android:layout_weight="0"
-        android:textColor="@color/black"/>
+        android:layout_marginTop="20dp"
+        android:textColor="@color/white"
+        android:ellipsize="marquee"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:singleLine="true"
+        android:scrollHorizontally="true"
+        android:focusable="true"
+        android:focusableInTouchMode="true"/>
 
     <TextView
         android:id="@+id/artist"
@@ -95,52 +106,70 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
         android:text="Название автора"
-        android:textSize="20sp"
+        android:textSize="15sp"
         android:textAlignment="center"
-        android:textColor="@color/black"/>
+        android:textColor="@color/white"
+        android:layout_marginTop="5dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="25dp"
-        android:orientation="horizontal"
-        android:layout_margin="20dp"
-        android:layout_weight="0">
-        <TextView
-            android:id="@+id/start"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:textSize="15sp"
-            android:text="00:00"
-            android:gravity="center"
-            android:textColor="@color/black"/>
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_margin="20dp">
 
+        <!-- SeekBar -->
         <androidx.appcompat.widget.AppCompatSeekBar
             android:id="@+id/seekBar"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
             android:thumb="@drawable/custom_thumb"
             android:progressDrawable="@drawable/custom_progress"
             android:minHeight="1dp"
-            android:maxHeight="2dp"/>
+            android:maxHeight="3dp"
+            android:paddingStart="6dp"
+            android:paddingEnd="6dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"/>
 
-        <TextView
-            android:id="@+id/duration"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:textSize="15sp"
-            android:text="Скоро"
-            android:gravity="center"
-            android:textColor="@color/black"/>
+        <!-- Время и продолжительность -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp">
+
+            <!-- Текущее время -->
+            <TextView
+                android:id="@+id/start"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="15sp"
+                android:text="00:00"
+                android:textColor="@color/white"
+                android:gravity="start"/>
+
+            <!-- Продолжительность -->
+            <TextView
+                android:id="@+id/duration"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="15sp"
+                android:text="00:00"
+                android:textColor="@color/white"
+                android:gravity="end"/>
+        </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_margin="20dp"
+        android:layout_margin="0dp"
         android:gravity="center"
-        android:layout_weight="1">
+        android:layout_weight="0">
 
         <ImageButton
             android:id="@+id/previous"
@@ -148,8 +177,8 @@
             android:layout_height="wrap_content"
             android:padding="10dp"
             android:background="@drawable/rounded_button_background"
-            android:src="@drawable/baseline_skip_previous_24"
-            app:tint="@color/black" />
+            android:src="@drawable/baseline_skip_previous_32"
+            app:tint="@color/white" />
 
         <ImageButton
             android:id="@+id/playPause"
@@ -158,8 +187,8 @@
             android:layout_marginHorizontal="25dp"
             android:padding="15dp"
             android:background="@drawable/rounded_button_background"
-            android:src="@drawable/baseline_pause_24"
-            app:tint="@color/black" />
+            android:src="@drawable/baseline_pause_48"
+            app:tint="@color/white" />
 
         <ImageButton
             android:id="@+id/next"
@@ -167,15 +196,15 @@
             android:layout_height="wrap_content"
             android:padding="10dp"
             android:background="@drawable/rounded_button_background"
-            android:src="@drawable/baseline_skip_next_24"
-            app:tint="@color/black" />
+            android:src="@drawable/baseline_skip_next_32"
+            app:tint="@color/white"/>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_margin="30dp"
+        android:layout_margin="50dp"
         android:layout_weight="1">
 
         <ImageButton
@@ -183,7 +212,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/baseline_thumb_up_24"
             android:background="@android:color/transparent"
-            app:tint="@color/black"
+            app:tint="@color/white"
             android:layout_weight="1"
             tools:ignore="NestedWeights" />
 
@@ -192,7 +221,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/baseline_thumb_down_24"
             android:background="@android:color/transparent"
-            app:tint="@color/black"
+            app:tint="@color/white"
             android:layout_weight="1"/>
 
         <ImageButton
@@ -200,7 +229,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/baseline_comment_24"
             android:background="@android:color/transparent"
-            app:tint="@color/black"
+            app:tint="@color/white"
             android:layout_weight="1"/>
 
         <ImageButton
@@ -208,7 +237,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/baseline_playlist_add_24"
             android:background="@android:color/transparent"
-            app:tint="@color/black"
+            app:tint="@color/white"
             android:layout_weight="1"/>
 
         <ImageButton
@@ -216,7 +245,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/baseline_repeat_24"
             android:background="@android:color/transparent"
-            app:tint="@color/black"
+            app:tint="@color/white"
             android:layout_weight="1"/>
     </LinearLayout>
 

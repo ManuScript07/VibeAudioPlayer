@@ -2,13 +2,13 @@ package com.example.vibe_audio_player.fragments
 
 import android.annotation.SuppressLint
 import android.content.ComponentName
-import android.content.Context
 import android.content.Context.BIND_AUTO_CREATE
 import android.content.Intent
 import android.content.ServiceConnection
 import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.media.MediaMetadataRetriever
 import android.media.MediaPlayer
@@ -21,13 +21,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.vibe_audio_player.R
-import com.example.vibe_audio_player.SharedViewModel
 import com.example.vibe_audio_player.Song
 import com.example.vibe_audio_player.activities.MainActivity
 import com.example.vibe_audio_player.databinding.FragmentPlayerBinding
@@ -41,6 +40,7 @@ import kotlin.system.exitProcess
  * An example full-screen fragment that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
+@Suppress("DEPRECATION")
 class PlayerFragment: Fragment(), ServiceConnection, MediaPlayer.OnCompletionListener{
 
     companion object{
@@ -52,12 +52,14 @@ class PlayerFragment: Fragment(), ServiceConnection, MediaPlayer.OnCompletionLis
         lateinit var binding: FragmentPlayerBinding
         var nowPlayingId: String = ""
         var namePlayList: String = ""
-        lateinit var context: Context
     }
 
-    private val sharedViewModel: SharedViewModel by activityViewModels()
-    private lateinit var songClass: String
-    private lateinit var namePlayLists: String
+//    private val sharedViewModel: SharedViewModel by activityViewModels()
+//    private lateinit var songClass: String
+//    private lateinit var namePlayLists: String
+
+    private var isUserTouching = false
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -65,17 +67,6 @@ class PlayerFragment: Fragment(), ServiceConnection, MediaPlayer.OnCompletionLis
         binding = FragmentPlayerBinding.inflate(inflater, container, false)
         musicListPF = ArrayList()
 
-        sharedViewModel.songClass.observe(viewLifecycleOwner) { sonп ->
-            songClass = sonп
-        }
-
-        sharedViewModel.songPosition.observe(viewLifecycleOwner) { position ->
-            songPosition = position
-        }
-
-        sharedViewModel.songPosition.observe(viewLifecycleOwner) { PlayList ->
-            namePlayList = PlayList.toString()
-        }
 
         if(requireActivity().intent.data?.scheme.contentEquals("content")){
             songPosition = 0
@@ -107,9 +98,9 @@ class PlayerFragment: Fragment(), ServiceConnection, MediaPlayer.OnCompletionLis
         binding.next.setOnClickListener{
             previousOrNextSong(true)
         }
-
+//        var isUserTouching = false
         binding.seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            private var isUserTouching = false
+
 
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 if (fromUser) {
@@ -134,10 +125,6 @@ class PlayerFragment: Fragment(), ServiceConnection, MediaPlayer.OnCompletionLis
 
         binding.artist.setOnClickListener{
             val navController = findNavController()
-
-            // Сначала полностью убираем PlayerFragment из стека
-
-            // Затем переходим в AboutArtistFragment
             val action = PlayerFragmentDirections.actionPlayerFragmentToAboutArtistFragment(
                 ARIST = binding.artist.text.toString()
             )
@@ -154,21 +141,21 @@ class PlayerFragment: Fragment(), ServiceConnection, MediaPlayer.OnCompletionLis
         return binding.root
     }
 
-//    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-//        super.onViewCreated(view, savedInstanceState)
-//
-//
-//    }
 
     override fun onResume() {
         super.onResume()
-        //Toast.makeText(context, "orpa", Toast.LENGTH_SHORT).show()
+        activeStatusBar()
         requireActivity().findViewById<View>(R.id.miniPlayer)?.visibility = View.GONE
+    }
+
+    override fun onPause() {
+        super.onPause()
+        resetStatusBar()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        //Toast.makeText(context, "odpa", Toast.LENGTH_SHORT).show()
+        resetStatusBar()
         requireActivity().findViewById<View>(R.id.miniPlayer)?.visibility = View.VISIBLE
         updateMiniPlayerUI()
     }
@@ -202,7 +189,7 @@ class PlayerFragment: Fragment(), ServiceConnection, MediaPlayer.OnCompletionLis
                 binding.seekBar.max = musicService!!.mediaPlayer!!.duration
 
                 if (!isPlaying)
-                    binding.playPause.setImageResource(R.drawable.baseline_play_arrow_24)
+                    binding.playPause.setImageResource(R.drawable.baseline_play_arrow_48)
             }
         }
 
@@ -229,29 +216,51 @@ class PlayerFragment: Fragment(), ServiceConnection, MediaPlayer.OnCompletionLis
 
 
         val img = getImgArt(musicListPF[songPosition].path)
+
         val image = if (img != null){
             BitmapFactory.decodeByteArray(
                 img, 0, img.size
             )
         }else {
             BitmapFactory.decodeResource(
-                resources, R.drawable.baseline_music_off_24
+                img, R.drawable.baseline_music_off_24
+//                        img, R.drawable.baseline_music_off_24 Если крашится
             )
         }
 
-        val bgColor = getMainColor(image)
-        val gradient = GradientDrawable(
-            GradientDrawable.Orientation.BOTTOM_TOP,
-            intArrayOf(0xFFFFFF, bgColor)
-        )
-        binding.root.background = gradient
-        activity?.window?.statusBarColor = bgColor
+        if (image != null && image.width > 0 && image.height > 0){
+            try {
+                val mainColor = getMainColor(image)
+                val darkerColor = darkenColor(mainColor, 0.85f)
+                val gradient = GradientDrawable(
+                    GradientDrawable.Orientation.TOP_BOTTOM,
+                    intArrayOf(darkerColor, mainColor)
+                )
+                binding.root.background = gradient
+                activeStatusBar()
+
+            }catch (e: Exception){
+                binding.root.background = GradientDrawable(
+                    GradientDrawable.Orientation.TOP_BOTTOM,
+                    intArrayOf(Color.BLACK, Color.DKGRAY)
+                )
+                activeStatusBar()
+
+            }
+        } else {
+            binding.root.background = GradientDrawable(
+                GradientDrawable.Orientation.TOP_BOTTOM,
+                intArrayOf(Color.BLACK, Color.DKGRAY)
+            )
+            activeStatusBar()
+        }
     }
 
 
     private fun createMediaPlayer(){
         try {
-            if (musicService!!.mediaPlayer == null) musicService!!.mediaPlayer = MediaPlayer()
+            if (musicService!!.mediaPlayer == null)
+                musicService!!.mediaPlayer = MediaPlayer()
             musicService!!.mediaPlayer!!.reset()
             musicService!!.mediaPlayer!!.setDataSource(musicListPF[songPosition].path)
             musicService!!.mediaPlayer!!.prepare()
@@ -283,12 +292,42 @@ class PlayerFragment: Fragment(), ServiceConnection, MediaPlayer.OnCompletionLis
         }
     }
 
-    private fun getMainColor(img: Bitmap): Int {
-        val newImg = Bitmap.createScaledBitmap(img, 1, 1, true)
-        val color = newImg.getPixel(0, 0)
-        newImg.recycle()
-        return color
+
+    private fun getBrightness(color: Int): Double {
+        val red = Color.red(color)
+        val green = Color.green(color)
+        val blue = Color.blue(color)
+        return (0.299 * red + 0.587 * green + 0.114 * blue)
     }
+
+
+
+    private fun darkenColor(color: Int, factor: Float): Int {
+        val red = (Color.red(color) * factor).toInt()
+        val green = (Color.green(color) * factor).toInt()
+        val blue = (Color.blue(color) * factor).toInt()
+        return Color.rgb(red, green, blue)
+//        return ColorUtils.blendARGB(color, Color.BLACK, factor)
+    }
+
+    private fun getMainColor(img: Bitmap): Int {
+        return try {
+            val newImg = Bitmap.createScaledBitmap(img, 1, 1, true)
+            val color = newImg.getPixel(0, 0)
+            newImg.recycle()
+
+            val brightness = getBrightness(color)
+            if (brightness > 128)
+                darkenColor(color, 0.5f)
+            else
+                color
+        } catch (e: Exception){
+            0xFFFFFF
+        }
+    }
+
+
+
 
     private fun getImgArt(path: String): ByteArray?{
         val retriever = MediaMetadataRetriever()
@@ -296,13 +335,13 @@ class PlayerFragment: Fragment(), ServiceConnection, MediaPlayer.OnCompletionLis
         return retriever.embeddedPicture
     }
     private fun playMusic(){
-        binding.playPause.setImageResource(R.drawable.baseline_pause_24)
+        binding.playPause.setImageResource(R.drawable.baseline_pause_48)
         isPlaying = true
         musicService!!.mediaPlayer!!.start()
     }
 
     private fun pauseMusic(){
-        binding.playPause.setImageResource(R.drawable.baseline_play_arrow_24)
+        binding.playPause.setImageResource(R.drawable.baseline_play_arrow_48)
         isPlaying = false
         musicService!!.mediaPlayer!!.pause()
     }
@@ -329,10 +368,14 @@ class PlayerFragment: Fragment(), ServiceConnection, MediaPlayer.OnCompletionLis
 
         Glide.with(MainActivity.binding.image)
             .load(musicListPF[songPosition].artUri)
-            .apply(RequestOptions().placeholder(R.drawable.baseline_music_off_24).centerCrop())
+            .apply(
+                RequestOptions().placeholder(R.drawable.baseline_music_off_24).centerCrop()
+            )
             .into(MainActivity.binding.image)
 
         MainActivity.binding.songName.text = musicListPF[songPosition].title
+        MainActivity.binding.artistName.text = musicListPF[songPosition].artist
+
     }
 
     override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
@@ -361,26 +404,38 @@ class PlayerFragment: Fragment(), ServiceConnection, MediaPlayer.OnCompletionLis
     }
 
     private fun updateMiniPlayerUI() {
-        //Toast.makeText(context, "ssdf", Toast.LENGTH_SHORT).show()
         if (musicService != null) {
+
             MainActivity.binding.root.visibility = View.VISIBLE
             MainActivity.binding.songName.isSelected = true
-
-            Glide.with(requireContext())
+            Glide.with(MainActivity.binding.image)
                 .load(musicListPF[songPosition].artUri)
                 .apply(RequestOptions().placeholder(R.drawable.baseline_music_off_24).centerCrop())
                 .into(MainActivity.binding.image)
-
             MainActivity.binding.songName.text = musicListPF[songPosition].title
             MainActivity.binding.artistName.text = musicListPF[songPosition].artist
             if (isPlaying)
-                MainActivity.binding.playPause.setImageResource(R.drawable.baseline_pause_24)
+                MainActivity.binding.playPause.setImageResource(R.drawable.baseline_pause_32)
 
             else
-                MainActivity.binding.playPause.setImageResource(R.drawable.baseline_play_arrow_24)
+                MainActivity.binding.playPause.setImageResource(R.drawable.baseline_play_arrow_32)
         }
     }
 
+
+    private fun resetStatusBar() {
+        activity?.window?.apply {
+            statusBarColor = ContextCompat.getColor(requireContext(), R.color.purple_500)
+            decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
+        }
+    }
+
+    private fun activeStatusBar(){
+        activity?.window?.apply {
+            statusBarColor = Color.TRANSPARENT
+            decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+        }
+    }
 }
 
 

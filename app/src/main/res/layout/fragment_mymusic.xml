@@ -37,11 +37,11 @@
             android:id="@+id/goToAllSongs"
             android:layout_width="219dp"
             android:layout_height="43dp"
-            android:layout_gravity="center_vertical"
+            android:layout_gravity="bottom"
             android:layout_marginStart="0dp"
             android:layout_weight="1"
             android:background="@android:color/transparent"
-            android:paddingStart="150dp"
+            android:paddingStart="110dp"
             android:src="@drawable/baseline_keyboard_arrow_right_24"
             app:tint="@color/black"/>
 

@@ -98,7 +98,6 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-        // Инициализация списка треков
         musicListMA = ArrayList()
 
         if (requestRuntimePermission()) {
@@ -108,6 +107,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+
+
         if (PlayerFragment.musicService != null) {
             binding.miniPlayer.visibility = View.VISIBLE
             binding.songName.isSelected = true
@@ -118,10 +119,10 @@ class MainActivity : AppCompatActivity() {
             binding.songName.text = musicListPF[songPosition].title
             binding.artistName.text = musicListPF[songPosition].artist
             if (PlayerFragment.isPlaying)
-                binding.playPause.setImageResource(R.drawable.baseline_pause_24)
+                binding.playPause.setImageResource(R.drawable.baseline_pause_32)
 
             else
-                binding.playPause.setImageResource(R.drawable.baseline_play_arrow_24)
+                binding.playPause.setImageResource(R.drawable.baseline_play_arrow_32)
         }
     }
 
@@ -129,16 +130,16 @@ class MainActivity : AppCompatActivity() {
     private fun playMusic(){
         PlayerFragment.isPlaying = true
         PlayerFragment.musicService!!.mediaPlayer!!.start()
-        binding.playPause.setImageResource(R.drawable.baseline_pause_24)
-        PlayerFragment.binding.next.setImageResource(R.drawable.baseline_pause_24)
+        binding.playPause.setImageResource(R.drawable.baseline_pause_32)
+        PlayerFragment.binding.next.setImageResource(R.drawable.baseline_pause_48)
 
     }
 
     private fun pauseMusic(){
         PlayerFragment.isPlaying = false
         PlayerFragment.musicService!!.mediaPlayer!!.pause()
-        binding.playPause.setImageResource(R.drawable.baseline_play_arrow_24)
-        PlayerFragment.binding.next.setImageResource(R.drawable.baseline_play_arrow_24)
+        binding.playPause.setImageResource(R.drawable.baseline_play_arrow_32)
+        PlayerFragment.binding.next.setImageResource(R.drawable.baseline_play_arrow_48)
 
     }
 

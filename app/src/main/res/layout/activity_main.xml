@@ -28,8 +28,9 @@
         android:layout_gravity="bottom"
         app:layout_constraintBottom_toTopOf="@id/bottomNavigationView"
         tools:ignore="MissingConstraints"
-        android:background="@color/purple_200"
-        android:visibility="invisible">
+        android:background="@drawable/rounded_mini_player"
+        android:visibility="invisible"
+        android:layout_margin="5dp">
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/image"
@@ -50,7 +51,7 @@
             android:padding="10dp"
             android:background="@drawable/rounded_button_background"
             android:src="@drawable/baseline_skip_next_24"
-            app:tint="@color/black" />
+            app:tint="@color/white" />
 
 
         <ImageButton
@@ -62,8 +63,8 @@
             android:layout_marginHorizontal="5dp"
             android:padding="10dp"
             android:background="@drawable/rounded_button_background"
-            android:src="@drawable/baseline_play_arrow_24"
-            app:tint="@color/black" />
+            android:src="@drawable/baseline_play_arrow_32"
+            app:tint="@color/white" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -79,7 +80,7 @@
             android:layout_height="40dp"
             android:text="Название песни"
             android:textSize="20sp"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             android:textStyle="bold"
             android:ellipsize="marquee"
             android:marqueeRepeatLimit="marquee_forever"
@@ -94,7 +95,7 @@
             android:layout_height="20dp"
             android:text="Имя артиста"
             android:textSize="15sp"
-            android:textColor="@color/black" />
+            android:textColor="@color/white" />
         </LinearLayout>
     </RelativeLayout>
 

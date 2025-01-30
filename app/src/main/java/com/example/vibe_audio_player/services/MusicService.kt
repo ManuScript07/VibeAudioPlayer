@@ -32,12 +32,13 @@ class MusicService: Service() {
 
     fun createMediaPlayer() {
         try {
-            if (mediaPlayer == null) mediaPlayer = MediaPlayer()
+            if (mediaPlayer == null)
+                mediaPlayer = MediaPlayer()
             mediaPlayer?.reset()
             mediaPlayer?.setDataSource(PlayerFragment.musicListPF[PlayerFragment.songPosition].path)
             mediaPlayer?.prepare()
 
-            PlayerFragment.binding.playPause.setImageResource(R.drawable.baseline_pause_24)
+            PlayerFragment.binding.playPause.setImageResource(R.drawable.baseline_pause_48)
             PlayerFragment.binding.start.text =
                 formatDuration(mediaPlayer!!.currentPosition.toLong())
             PlayerFragment.binding.duration.text =

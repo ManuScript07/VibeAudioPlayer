@@ -41,6 +41,7 @@ class AboutArtistFragment : Fragment() {
             } catch (e: IllegalArgumentException) {
                 false
             }
+
             if (isPlayerInBackStack)
                 navController.popBackStack(R.id.playerFragment, true)
             else

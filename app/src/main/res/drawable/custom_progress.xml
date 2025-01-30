@@ -4,17 +4,17 @@
     <!-- Пройденная часть -->    <item android:id="@android:id/background">
     <shape android:shape="rectangle">
         <corners android:radius="5dp" /> <!-- Скругление краёв -->
-        <size android:height="4dp" /> <!-- Высота непройденной части -->
-        <solid android:color="@color/grey" />
+        <size android:height="10dp" /> <!-- Высота непройденной части -->
+        <solid android:color="#B3AAAAAA"/>
     </shape>
 </item>
 
     <item android:id="@android:id/progress">
         <clip>
             <shape android:shape="rectangle">
-                <corners android:radius="5dp" /> <!-- Скругление краёв -->
-                <size android:height="4dp" /> <!-- Высота пройденной части -->
-                <solid android:color="@color/purple_500" />
+                <corners android:radius="10dp" /> <!-- Скругление краёв -->
+                <size android:height="5dp" /> <!-- Высота пройденной части -->
+                <solid android:color="@color/white" />
             </shape>
         </clip>
     </item>

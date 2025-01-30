@@ -150,7 +150,7 @@
             android:layout_height="wrap_content"
             android:padding="10dp"
             android:background="@drawable/rounded_button_background"
-            android:src="@drawable/baseline_skip_previous_24"
+            android:src="@drawable/baseline_skip_previous_32"
             app:tint="@color/black" />
 
         <ImageButton
@@ -160,7 +160,7 @@
             android:layout_marginHorizontal="25dp"
             android:padding="15dp"
             android:background="@drawable/rounded_button_background"
-            android:src="@drawable/baseline_pause_24"
+            android:src="@drawable/baseline_pause_48"
             app:tint="@color/black" />
 
         <ImageButton
