@@ -9,19 +9,10 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.vibe_audio_player.adapters.SongRVAdapter
 import com.example.vibe_audio_player.databinding.FragmentMyTracksBinding
-import com.example.vibe_audio_player.fragments.MyMusic.Companion.musicListMM
+import com.example.vibe_audio_player.fragments.MainFragment.Companion.musicListMF
 
 
 class MyTracksFragment : Fragment() {
-    companion object {
-        fun newInstance(data: String?): MyMusic {
-            val fragment = MyMusic()
-            val args = Bundle()
-            args.putString("artist", data)
-            fragment.arguments = args
-            return fragment
-        }
-    }
     private lateinit var binding: FragmentMyTracksBinding
     private lateinit var adapter: SongRVAdapter
 
@@ -40,8 +31,8 @@ class MyTracksFragment : Fragment() {
         val artist = arguments?.getString("artist")
 
         binding.text.text = artist
-        adapter = SongRVAdapter(requireContext(), musicListMM) { song, position ->
-            openPlayerActivity(position)
+        adapter = SongRVAdapter(requireContext(), musicListMF) { song, position ->
+            openPlayerFragment(position)
         }
 
         binding.rv.apply {
@@ -50,12 +41,13 @@ class MyTracksFragment : Fragment() {
             layoutManager = LinearLayoutManager(context)
             adapter = this@MyTracksFragment.adapter
         }
+
     }
 
 
-    private fun openPlayerActivity(position: Int) {
+    private fun openPlayerFragment(position: Int) {
         val action = PlayerFragmentDirections.actionGlobalPlayerFragment(
-            SONGCLASS = (if (musicListMM[position].id == PlayerFragment.nowPlayingId) "MiniPlayer" else "MyMusic"),
+            SONGCLASS = (if (musicListMF[position].id == PlayerFragment.nowPlayingId) "MiniPlayer" else "MyMusic"),
             SONGPOSITION = position,
             NAMEPLAYLIST = "Мои треки"
         )

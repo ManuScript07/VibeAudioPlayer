@@ -21,6 +21,16 @@ class AboutArtistFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         binding = FragmentAboutArtistBinding.inflate(layoutInflater, container, false)
+
+        val navController = findNavController()
+        val isPlayerInBackStack = try {
+            navController.getBackStackEntry(R.id.playerFragment)
+            true
+        } catch (e: IllegalArgumentException) {
+            false
+        }
+        if (isPlayerInBackStack)
+            MainFragment.binding.bottomNavigationView.visibility = View.GONE
         return binding.root
 
     }

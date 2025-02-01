@@ -51,17 +51,6 @@ class SongRVAdapter(
             .load(songs[position].artUri)
             .apply(RequestOptions().placeholder(R.drawable.baseline_music_off_24).centerCrop())
             .into(holder.binding.imageView)
-////
-//        holder.root.setOnClickListener {
-//            when {
-//                songs[position].id == PlayerFragment.nowPlayingId -> sendIntent(
-//                    "MiniPlayer",
-//                    PlayerFragment.songPosition
-//                )
-//
-//                else -> sendIntent("SongRVAdapter", position)
-//            }
-//        }
 
     }
 
@@ -77,15 +66,6 @@ class SongRVAdapter(
         notifyDataSetChanged() // Обновление адаптера
     }
 
-    private fun sendIntent(clss: String, position: Int, namePlayList: String = "Мои треки"){
-//        val intent = Intent(context, PlayerActivity::class.java).apply{
-//            putExtra("position", position)
-//            putExtra("song_class", clss)
-//            putExtra("namePlayList", namePlayList)
-//        }
-//
-//
-//        ContextCompat.startActivity(context, intent, null)
 
     }
 }

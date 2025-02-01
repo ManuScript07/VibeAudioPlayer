@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_main"
+    app:startDestination="@id/my_music_navigation">
+
+    <action android:id="@+id/action_global_playerFragment"
+        app:destination="@id/playerFragment"
+        app:enterAnim="@anim/slide_in_bottom"
+        app:exitAnim="@anim/slide_out_bottom"
+        app:popEnterAnim="@anim/slide_in_bottom"
+        app:popExitAnim="@anim/slide_out_bottom">
+    <argument
+        android:name="SONG_CLASS"
+        app:argType="string" />
+
+    <argument
+        android:name="SONG_POSITION"
+        app:argType="integer" />
+
+    <argument
+        android:name="NAME_PLAYLIST"
+        app:argType="string" />
+    </action>
+
+
+    <fragment
+        android:id="@+id/playerFragment"
+        android:name="com.example.vibe_audio_player.fragments.PlayerFragment"
+        android:label="PlayerFragment">
+        <argument
+            android:name="SONG_CLASS"
+            app:argType="string" />
+        <argument
+            android:name="SONG_POSITION"
+            app:argType="integer" />
+        <argument
+            android:name="NAME_PLAYLIST"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_playerFragment_to_aboutArtistFragment"
+            app:destination="@id/aboutArtistFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/aboutArtistFragment"
+        android:name="com.example.vibe_audio_player.fragments.AboutArtistFragment"
+        android:label="fragment_about_artist"
+        tools:layout="@layout/fragment_about_artist">
+        <argument
+            android:name="ARIST"
+            app:argType="string" />
+    </fragment>
+
+    <navigation android:id="@+id/my_music_navigation"
+        app:startDestination="@id/my_music">
+        <fragment
+            android:id="@+id/my_music"
+            android:name="com.example.vibe_audio_player.fragments.MyMusic"
+            android:label="fragment_mymusic"
+            tools:layout="@layout/fragment_mymusic">
+            <action
+                android:id="@+id/action_my_music_to_playListFragment"
+                app:destination="@id/playListFragment" />
+            <action
+                android:id="@+id/action_my_music_to_myTracksFragment"
+                app:destination="@id/myTracksFragment"
+                app:enterAnim="@anim/slide_in_right"
+                app:exitAnim="@anim/slide_out_left"
+                app:popEnterAnim="@anim/slide_in_left"
+                app:popExitAnim="@anim/slide_out_right" />
+        </fragment>
+        <fragment
+            android:id="@+id/myTracksFragment"
+            android:name="com.example.vibe_audio_player.fragments.MyTracksFragment"
+            android:label="fragment_my_tracks"
+            tools:layout="@layout/fragment_my_tracks">
+            <action
+                android:id="@+id/action_myTracksFragment_to_my_music"
+                app:destination="@id/my_music_navigation" />
+
+        </fragment>
+        <fragment
+            android:id="@+id/playListFragment"
+            android:name="com.example.vibe_audio_player.fragments.PlayListFragment"
+            android:label="fragment_play_list"
+            tools:layout="@layout/fragment_play_list">
+            <action
+                android:id="@+id/action_playListFragment_to_my_music"
+                app:destination="@id/my_music_navigation" />
+        </fragment>
+    </navigation>
+
+    <navigation android:id="@+id/profile_navigation"
+        app:startDestination="@id/profile">
+        <fragment
+            android:id="@+id/profile"
+            android:name="com.example.vibe_audio_player.fragments.Profile"
+            android:label="fragment_profile"
+            tools:layout="@layout/fragment_profile" />
+    </navigation>
+
+    <navigation android:id="@+id/search_navigation"
+        app:startDestination="@id/search">
+        <fragment
+            android:id="@+id/search"
+            android:name="com.example.vibe_audio_player.fragments.Search"
+            android:label="fragment_search"
+            tools:layout="@layout/fragment_search" />
+    </navigation>
+
+    <navigation android:id="@+id/stream_navigation"
+        app:startDestination="@id/stream">
+        <fragment
+            android:id="@+id/stream"
+            android:name="com.example.vibe_audio_player.fragments.Stream"
+            android:label="fragment_stream"
+            tools:layout="@layout/fragment_stream" />
+    </navigation>
+
+    <navigation android:id="@+id/for_you_navigation"
+        app:startDestination="@id/for_you">
+        <fragment
+            android:id="@+id/for_you"
+            android:name="com.example.vibe_audio_player.fragments.ForYou"
+            android:label="fragment_foryou"
+            tools:layout="@layout/fragment_foryou" />
+    </navigation>
+
+
+</navigation>

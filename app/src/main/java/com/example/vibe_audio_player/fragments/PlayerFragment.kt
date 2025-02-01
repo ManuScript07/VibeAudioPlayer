@@ -173,14 +173,14 @@ class PlayerFragment: Fragment(), ServiceConnection, MediaPlayer.OnCompletionLis
                 requireActivity().bindService(intent, this, BIND_AUTO_CREATE)
                 requireActivity().startService(intent)
                 musicListPF = ArrayList()
-                musicListPF.addAll(MainActivity.musicListMA)
+                musicListPF.addAll(MainFragment.musicListMF)
                 namePlayList = "Мои треки"
                 setLayout()
 
             }
             "MiniPlayer" -> {
                 if (musicListPF.isEmpty())
-                    musicListPF.addAll(MainActivity.musicListMA)
+                    musicListPF.addAll(MainFragment.musicListMF)
                 setLayout()
 
                 binding.start.text = formatDuration(musicService!!.mediaPlayer!!.currentPosition.toLong())
@@ -204,6 +204,7 @@ class PlayerFragment: Fragment(), ServiceConnection, MediaPlayer.OnCompletionLis
     }
 
     private fun setLayout(){
+
         Glide.with(binding.songImg)
             .load(musicListPF[songPosition].artUri)
             .apply(RequestOptions().placeholder(R.drawable.baseline_music_off_24).centerCrop())
@@ -307,7 +308,6 @@ class PlayerFragment: Fragment(), ServiceConnection, MediaPlayer.OnCompletionLis
         val green = (Color.green(color) * factor).toInt()
         val blue = (Color.blue(color) * factor).toInt()
         return Color.rgb(red, green, blue)
-//        return ColorUtils.blendARGB(color, Color.BLACK, factor)
     }
 
     private fun getMainColor(img: Bitmap): Int {
@@ -364,17 +364,17 @@ class PlayerFragment: Fragment(), ServiceConnection, MediaPlayer.OnCompletionLis
         createMediaPlayer()
         setLayout()
 
-        MainActivity.binding.songName.isSelected = true
+        MainFragment.binding.songName.isSelected = true
 
-        Glide.with(MainActivity.binding.image)
+        Glide.with(MainFragment.binding.image)
             .load(musicListPF[songPosition].artUri)
             .apply(
                 RequestOptions().placeholder(R.drawable.baseline_music_off_24).centerCrop()
             )
-            .into(MainActivity.binding.image)
+            .into(MainFragment.binding.image)
 
-        MainActivity.binding.songName.text = musicListPF[songPosition].title
-        MainActivity.binding.artistName.text = musicListPF[songPosition].artist
+        MainFragment.binding.songName.text = musicListPF[songPosition].title
+        MainFragment.binding.artistName.text = musicListPF[songPosition].artist
 
     }
 
@@ -407,18 +407,18 @@ class PlayerFragment: Fragment(), ServiceConnection, MediaPlayer.OnCompletionLis
         if (musicService != null) {
 
             MainActivity.binding.root.visibility = View.VISIBLE
-            MainActivity.binding.songName.isSelected = true
-            Glide.with(MainActivity.binding.image)
+            MainFragment.binding.songName.isSelected = true
+            Glide.with(MainFragment.binding.image)
                 .load(musicListPF[songPosition].artUri)
                 .apply(RequestOptions().placeholder(R.drawable.baseline_music_off_24).centerCrop())
-                .into(MainActivity.binding.image)
-            MainActivity.binding.songName.text = musicListPF[songPosition].title
-            MainActivity.binding.artistName.text = musicListPF[songPosition].artist
+                .into(MainFragment.binding.image)
+            MainFragment.binding.songName.text = musicListPF[songPosition].title
+            MainFragment.binding.artistName.text = musicListPF[songPosition].artist
             if (isPlaying)
-                MainActivity.binding.playPause.setImageResource(R.drawable.baseline_pause_32)
+                MainFragment.binding.playPause.setImageResource(R.drawable.baseline_pause_32)
 
             else
-                MainActivity.binding.playPause.setImageResource(R.drawable.baseline_play_arrow_32)
+                MainFragment.binding.playPause.setImageResource(R.drawable.baseline_play_arrow_32)
         }
     }
 

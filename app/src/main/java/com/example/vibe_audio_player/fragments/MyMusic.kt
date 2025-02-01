@@ -12,9 +12,10 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.vibe_audio_player.R
 import com.example.vibe_audio_player.Song
-import com.example.vibe_audio_player.activities.MainActivity.Companion.musicListMA
+import com.example.vibe_audio_player.activities.MainActivity
 import com.example.vibe_audio_player.adapters.SongRVAdapter
 import com.example.vibe_audio_player.databinding.FragmentMymusicBinding
+import com.example.vibe_audio_player.fragments.MainFragment.Companion.musicListMF
 
 class MyMusic : Fragment() {
 
@@ -23,6 +24,7 @@ class MyMusic : Fragment() {
 
     companion object{
         var musicListMM: ArrayList<Song> = ArrayList()
+        lateinit var adapter: SongRVAdapter
     }
 
     private var isClickAllowed = true
@@ -36,7 +38,7 @@ class MyMusic : Fragment() {
         binding = FragmentMymusicBinding.inflate(inflater, container, false)
 
         adapter = SongRVAdapter(requireContext(), musicListMM) { song, position ->
-            openPlayerActivity(position)
+            openPlayerFragment(position)
         }
 
 
@@ -49,7 +51,7 @@ class MyMusic : Fragment() {
 
 
         binding.addMusicButton.setOnClickListener {
-
+            updateSongs()
         }
 
         binding.playList.setOnClickListener {
@@ -60,8 +62,17 @@ class MyMusic : Fragment() {
             findNavController().navigate(R.id.action_my_music_to_myTracksFragment)
         }
 
+        binding.button2.setOnClickListener {
+            updateSongs()
+        }
 
         return binding.root
+    }
+
+    @SuppressLint("SetTextI18n")
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.countSongs.text = musicListMF.size.toString()
     }
 
 
@@ -69,21 +80,13 @@ class MyMusic : Fragment() {
     @RequiresApi(Build.VERSION_CODES.R)
     override fun onResume() {
         super.onResume()
-        val updateList = ArrayList(musicListMA.take(4))
-
-        // Проверяем, пустой ли список
-        if (updateList.isEmpty()) {
-            binding.viewSwitcher.displayedChild = 1 // Показываем сообщение
-        } else {
-            binding.viewSwitcher.displayedChild = 0 // Показываем RecyclerView
-            adapter.updateData(updateList)
-        }
-
-        binding.countSongs.text = musicListMA.size.toString()
+        binding.countSongs.text = musicListMF.size.toString()
+        if (adapter.itemCount == 0)
+            updateSongs()
     }
 
     // Функция для открытия PlayerActivity
-    private fun openPlayerActivity(position: Int) {
+    private fun openPlayerFragment(position: Int) {
         if (isClickAllowed) {
             isClickAllowed = false
             val action = PlayerFragmentDirections.actionGlobalPlayerFragment(
@@ -95,5 +98,27 @@ class MyMusic : Fragment() {
 
             binding.root.postDelayed({ isClickAllowed = true }, 500)
         }
+    }
+
+    @SuppressLint("SetTextI18n")
+    @RequiresApi(Build.VERSION_CODES.R)
+    private fun updateSongs(){
+        musicListMF = MainActivity.loadTracks(requireContext())
+        val updateList = ArrayList(musicListMF.take(4))
+        if (PlayerFragment.musicService != null) {
+            PlayerFragment.musicListPF.clear()
+            PlayerFragment.musicListPF.addAll(musicListMF)
+        }
+
+        // Проверяем, пустой ли список
+        if (updateList.isEmpty()) {
+            binding.viewSwitcher.displayedChild = 1 // Показываем сообщение
+        } else {
+            binding.viewSwitcher.displayedChild = 0 // Показываем RecyclerView
+            adapter.updateData(updateList)
+            binding.countSongs.text = musicListMF.size.toString()
+        }
+
+
     }
 }

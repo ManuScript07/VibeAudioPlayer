@@ -2,18 +2,18 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:title="Моя музыка"
-        android:id="@+id/my_music"
+        android:id="@+id/my_music_navigation"
         android:icon="@drawable/music_note"/>
     <item android:title="Для вас"
-        android:id="@+id/for_you"
+        android:id="@+id/for_you_navigation"
         android:icon="@drawable/heart"/>
     <item android:title="Поток"
-        android:id="@+id/stream"
+        android:id="@+id/stream_navigation"
         android:icon="@drawable/music_note_slider"/>
     <item android:title="Поиск"
-        android:id="@+id/search"
+        android:id="@+id/search_navigation"
         android:icon="@drawable/search"/>
     <item android:title="Профиль"
-        android:id="@+id/profile"
+        android:id="@+id/profile_navigation"
         android:icon="@drawable/profile"/>
 </menu>
