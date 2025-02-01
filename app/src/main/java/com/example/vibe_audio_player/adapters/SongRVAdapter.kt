@@ -65,10 +65,8 @@ class SongRVAdapter(
         songs.addAll(newSongs) // Добавление новых данных
         notifyDataSetChanged() // Обновление адаптера
     }
-
-
-    }
 }
+
 
 
 

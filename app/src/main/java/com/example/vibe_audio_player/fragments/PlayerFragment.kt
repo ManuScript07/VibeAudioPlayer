@@ -361,6 +361,7 @@ class PlayerFragment: Fragment(), ServiceConnection, MediaPlayer.OnCompletionLis
 
     override fun onCompletion(mp: MediaPlayer?) {
         setSongPosition(increment = true)
+        resetStatusBar()
         createMediaPlayer()
         setLayout()
 
