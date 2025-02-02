@@ -23,6 +23,7 @@ import android.widget.SeekBar
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -36,10 +37,6 @@ import com.example.vibe_audio_player.setSongPosition
 import kotlin.system.exitProcess
 
 
-/**
- * An example full-screen fragment that shows and hides the system UI (i.e.
- * status bar and navigation/system bar) with user interaction.
- */
 @Suppress("DEPRECATION")
 class PlayerFragment: Fragment(), ServiceConnection, MediaPlayer.OnCompletionListener{
 
@@ -54,10 +51,6 @@ class PlayerFragment: Fragment(), ServiceConnection, MediaPlayer.OnCompletionLis
         var namePlayList: String = ""
     }
 
-//    private val sharedViewModel: SharedViewModel by activityViewModels()
-//    private lateinit var songClass: String
-//    private lateinit var namePlayLists: String
-
     private var isUserTouching = false
 
     override fun onCreateView(
@@ -65,9 +58,6 @@ class PlayerFragment: Fragment(), ServiceConnection, MediaPlayer.OnCompletionLis
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentPlayerBinding.inflate(inflater, container, false)
-        musicListPF = ArrayList()
-
-
         if(requireActivity().intent.data?.scheme.contentEquals("content")){
             songPosition = 0
             val intentService = Intent(requireContext(), MusicService::class.java)
@@ -98,7 +88,7 @@ class PlayerFragment: Fragment(), ServiceConnection, MediaPlayer.OnCompletionLis
         binding.next.setOnClickListener{
             previousOrNextSong(true)
         }
-//        var isUserTouching = false
+
         binding.seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
 
 
@@ -179,10 +169,7 @@ class PlayerFragment: Fragment(), ServiceConnection, MediaPlayer.OnCompletionLis
 
             }
             "MiniPlayer" -> {
-                if (musicListPF.isEmpty())
-                    musicListPF.addAll(MainFragment.musicListMF)
                 setLayout()
-
                 binding.start.text = formatDuration(musicService!!.mediaPlayer!!.currentPosition.toLong())
                 binding.duration.text = formatDuration(musicService!!.mediaPlayer!!.duration.toLong())
                 binding.seekBar.progress = musicService!!.mediaPlayer!!.currentPosition
@@ -203,21 +190,17 @@ class PlayerFragment: Fragment(), ServiceConnection, MediaPlayer.OnCompletionLis
 //            playMusic()
     }
 
-    private fun setLayout(){
+    private fun setLayout(statusBarUpdate: Boolean = true){
 
         Glide.with(binding.songImg)
             .load(musicListPF[songPosition].artUri)
             .apply(RequestOptions().placeholder(R.drawable.baseline_music_off_24).centerCrop())
             .into(binding.songImg)
 
-
-
         binding.title.text = musicListPF[songPosition].title
         binding.artist.text = musicListPF[songPosition].artist
 
-
         val img = getImgArt(musicListPF[songPosition].path)
-
         val image = if (img != null){
             BitmapFactory.decodeByteArray(
                 img, 0, img.size
@@ -238,14 +221,16 @@ class PlayerFragment: Fragment(), ServiceConnection, MediaPlayer.OnCompletionLis
                     intArrayOf(darkerColor, mainColor)
                 )
                 binding.root.background = gradient
-                activeStatusBar()
+                if (statusBarUpdate)
+                    activeStatusBar()
 
             }catch (e: Exception){
                 binding.root.background = GradientDrawable(
                     GradientDrawable.Orientation.TOP_BOTTOM,
                     intArrayOf(Color.BLACK, Color.DKGRAY)
                 )
-                activeStatusBar()
+                if (statusBarUpdate)
+                    activeStatusBar()
 
             }
         } else {
@@ -253,10 +238,10 @@ class PlayerFragment: Fragment(), ServiceConnection, MediaPlayer.OnCompletionLis
                 GradientDrawable.Orientation.TOP_BOTTOM,
                 intArrayOf(Color.BLACK, Color.DKGRAY)
             )
-            activeStatusBar()
+            if (statusBarUpdate)
+                activeStatusBar()
         }
     }
-
 
     private fun createMediaPlayer(){
         try {
@@ -360,10 +345,13 @@ class PlayerFragment: Fragment(), ServiceConnection, MediaPlayer.OnCompletionLis
     }
 
     override fun onCompletion(mp: MediaPlayer?) {
+        val currentState = lifecycle.currentState
         setSongPosition(increment = true)
-        resetStatusBar()
         createMediaPlayer()
-        setLayout()
+        if  (currentState != Lifecycle.State.RESUMED)
+            setLayout(false)
+        else
+            setLayout()
 
         MainFragment.binding.songName.isSelected = true
 

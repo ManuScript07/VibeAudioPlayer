@@ -100,7 +100,6 @@ class MainFragment : Fragment() {
             }
         }
 
-
     }
 
     override fun onResume() {

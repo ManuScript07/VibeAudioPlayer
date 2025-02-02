@@ -14,16 +14,13 @@
     <argument
         android:name="SONG_CLASS"
         app:argType="string" />
-
     <argument
         android:name="SONG_POSITION"
         app:argType="integer" />
-
     <argument
         android:name="NAME_PLAYLIST"
         app:argType="string" />
     </action>
-
 
     <fragment
         android:id="@+id/playerFragment"
@@ -83,7 +80,6 @@
             <action
                 android:id="@+id/action_myTracksFragment_to_my_music"
                 app:destination="@id/my_music_navigation" />
-
         </fragment>
         <fragment
             android:id="@+id/playListFragment"

@@ -20,15 +20,11 @@ import java.io.File
 
 class MainActivity : AppCompatActivity() {
 
-
-
     companion object {
-
 //        var musicListMA: ArrayList<Song> = ArrayList()
         @SuppressLint("StaticFieldLeak")
         lateinit var binding: ActivityMainBinding
         var permission: Boolean = false
-
 
         @SuppressLint("Recycle", "Range")
         @RequiresApi(Build.VERSION_CODES.R)

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<navigation xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:app="http://schemas.android.com/apk/res-auto"
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph_application"
     app:startDestination="@id/splashFragment">
@@ -14,7 +15,9 @@
             android:id="@+id/action_splashFragment_to_mainFragment"
             app:destination="@id/mainFragment"
             app:popUpToInclusive="true"
-            app:popUpTo="@+id/nav_graph_application"/>
+            app:popUpTo="@+id/nav_graph_application"
+            app:enterAnim="@anim/fade_in_to_main"
+            app:popEnterAnim="@anim/fade_in_to_main"/>
     </fragment>
 
     <fragment

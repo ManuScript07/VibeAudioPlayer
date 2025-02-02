@@ -5,10 +5,30 @@
     android:layout_height="match_parent"
     tools:context=".fragments.SplashFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="center">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ВАЙБ"
+            android:textColor="@color/purple_500"
+            android:textSize="75sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginTop="0dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Как же он чувствует"
+            android:gravity="center"
+            android:textSize="30sp"
+            android:textColor="@color/purple_700"/>
+    </LinearLayout>
+
 
 </FrameLayout>

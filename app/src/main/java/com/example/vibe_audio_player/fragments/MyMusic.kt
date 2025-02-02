@@ -24,23 +24,27 @@ class MyMusic : Fragment() {
 
     companion object{
         var musicListMM: ArrayList<Song> = ArrayList()
-        lateinit var adapter: SongRVAdapter
-    }
+   }
 
     private var isClickAllowed = true
 
-    @RequiresApi(Build.VERSION_CODES.R)
-    @SuppressLint("SetTextI18n")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentMymusicBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+
+    @RequiresApi(Build.VERSION_CODES.R)
+    @SuppressLint("SetTextI18n")
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         adapter = SongRVAdapter(requireContext(), musicListMM) { song, position ->
             openPlayerFragment(position)
         }
-
 
         binding.recyclerView.apply {
             setHasFixedSize(true)
@@ -65,14 +69,8 @@ class MyMusic : Fragment() {
         binding.button2.setOnClickListener {
             updateSongs()
         }
-
-        return binding.root
-    }
-
-    @SuppressLint("SetTextI18n")
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         binding.countSongs.text = musicListMF.size.toString()
+
     }
 
 
@@ -85,7 +83,6 @@ class MyMusic : Fragment() {
             updateSongs()
     }
 
-    // Функция для открытия PlayerActivity
     private fun openPlayerFragment(position: Int) {
         if (isClickAllowed) {
             isClickAllowed = false
@@ -110,11 +107,10 @@ class MyMusic : Fragment() {
             PlayerFragment.musicListPF.addAll(musicListMF)
         }
 
-        // Проверяем, пустой ли список
         if (updateList.isEmpty()) {
-            binding.viewSwitcher.displayedChild = 1 // Показываем сообщение
+            binding.viewSwitcher.displayedChild = 1
         } else {
-            binding.viewSwitcher.displayedChild = 0 // Показываем RecyclerView
+            binding.viewSwitcher.displayedChild = 0
             adapter.updateData(updateList)
             binding.countSongs.text = musicListMF.size.toString()
         }
