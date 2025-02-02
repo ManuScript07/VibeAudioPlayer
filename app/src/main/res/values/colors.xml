@@ -16,6 +16,7 @@
     <color name="dark_background">#121212</color>
     <color name="pure_black">#000000</color>
     <color name="white2">#E9E2E2</color>
+    <color name="light_gray">#D3D3D3</color>
 
     <!-- Дополнительные цвета -->
     <color name="blue_300">#4FC3F7</color>
