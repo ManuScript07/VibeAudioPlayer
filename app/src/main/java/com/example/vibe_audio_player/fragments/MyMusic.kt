@@ -16,6 +16,8 @@ import com.example.vibe_audio_player.activities.MainActivity
 import com.example.vibe_audio_player.adapters.SongRVAdapter
 import com.example.vibe_audio_player.databinding.FragmentMymusicBinding
 import com.example.vibe_audio_player.fragments.MainFragment.Companion.musicListMF
+import com.example.vibe_audio_player.fragments.MyTracksFragment.Companion.isShuffle
+import com.example.vibe_audio_player.fragments.PlayerFragment.Companion.songPosition
 
 class MyMusic : Fragment() {
 
@@ -88,9 +90,11 @@ class MyMusic : Fragment() {
             isClickAllowed = false
             val action = PlayerFragmentDirections.actionGlobalPlayerFragment(
                 SONGCLASS = (if (musicListMM[position].id == PlayerFragment.nowPlayingId) "MiniPlayer" else "MyMusic"),
-                SONGPOSITION = position,
-                NAMEPLAYLIST = "Мои треки"
+                SONGPOSITION = (if (musicListMF[position].id == PlayerFragment.nowPlayingId && isShuffle) songPosition else position),
+                NAMEPLAYLIST = (if (musicListMF[position].id == PlayerFragment.nowPlayingId && isShuffle) "Перемешанное" else "Мои треки")
             )
+            if (musicListMF[position].id != PlayerFragment.nowPlayingId && isShuffle)
+                isShuffle = false
             findNavController().navigate(action)
 
             binding.root.postDelayed({ isClickAllowed = true }, 500)

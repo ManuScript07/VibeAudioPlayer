@@ -159,15 +159,14 @@ class PlayerFragment: Fragment(), ServiceConnection, MediaPlayer.OnCompletionLis
 
         when(songClass){
             "MyMusic" -> {
-                val intent = Intent(requireContext(), MusicService::class.java)
-                requireActivity().bindService(intent, this, BIND_AUTO_CREATE)
-                requireActivity().startService(intent)
-                musicListPF = ArrayList()
-                musicListPF.addAll(MainFragment.musicListMF)
-                namePlayList = "Мои треки"
-                setLayout()
+                initMusicServiceAndPlayList(MainFragment.musicListMF)
+//                namePlayList = "Мои треки"
+            }
+            "Shuffle" ->{
+                initMusicServiceAndPlayList(MainFragment.musicListMF, shuffle = true)
 
             }
+
             "MiniPlayer" -> {
                 setLayout()
                 binding.start.text = formatDuration(musicService!!.mediaPlayer!!.currentPosition.toLong())
@@ -184,7 +183,11 @@ class PlayerFragment: Fragment(), ServiceConnection, MediaPlayer.OnCompletionLis
             if (namePlayLists == "")
                 namePlayList
             else
+            {
+                namePlayList = namePlayLists
                 namePlayLists
+            }
+
 
 //        if (musicService != null && !isPlaying)
 //            playMusic()
@@ -424,6 +427,18 @@ class PlayerFragment: Fragment(), ServiceConnection, MediaPlayer.OnCompletionLis
             statusBarColor = Color.TRANSPARENT
             decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
         }
+    }
+
+    private fun initMusicServiceAndPlayList(playlist: ArrayList<Song>, shuffle: Boolean = false){
+        val intent = Intent(requireContext(), MusicService::class.java)
+        requireActivity().bindService(intent, this, BIND_AUTO_CREATE)
+        requireActivity().startService(intent)
+        musicListPF = ArrayList()
+        musicListPF.addAll(playlist)
+        if (shuffle) {
+            musicListPF.shuffle()
+        }
+        setLayout()
     }
 }
 

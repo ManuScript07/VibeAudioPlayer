@@ -16,6 +16,7 @@ import com.example.vibe_audio_player.R
 import com.example.vibe_audio_player.Song
 import com.example.vibe_audio_player.activities.MainActivity
 import com.example.vibe_audio_player.databinding.FragmentMainBinding
+import com.example.vibe_audio_player.fragments.MyTracksFragment.Companion.isShuffle
 import com.example.vibe_audio_player.fragments.PlayerFragment.Companion.musicListPF
 import com.example.vibe_audio_player.fragments.PlayerFragment.Companion.songPosition
 import com.example.vibe_audio_player.setSongPosition
@@ -30,6 +31,8 @@ class MainFragment : Fragment() {
         @SuppressLint("StaticFieldLeak")
         lateinit var binding: FragmentMainBinding
     }
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -74,13 +77,14 @@ class MainFragment : Fragment() {
             val action = PlayerFragmentDirections.actionGlobalPlayerFragment(
                 SONGCLASS = "MiniPlayer",
                 SONGPOSITION = songPosition,
-                NAMEPLAYLIST = "Мои треки"
+                NAMEPLAYLIST = (if (isShuffle) "Перемешанное" else "")
             )
             navController.navigate(action)
         }
 
         val bottomNavigationView = view.findViewById<BottomNavigationView>(R.id.bottomNavigationView)
         bottomNavigationView.setupWithNavController(navController)
+
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
                 R.id.playerFragment -> {
@@ -99,8 +103,8 @@ class MainFragment : Fragment() {
                 }
             }
         }
-
     }
+
 
     override fun onResume() {
         super.onResume()

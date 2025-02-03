@@ -15,13 +15,17 @@ import com.example.vibe_audio_player.R
 import com.example.vibe_audio_player.adapters.SongRVAdapter
 import com.example.vibe_audio_player.databinding.FragmentMyTracksBinding
 import com.example.vibe_audio_player.fragments.MainFragment.Companion.musicListMF
+import com.example.vibe_audio_player.fragments.PlayerFragment.Companion.songPosition
 
 
+@Suppress("IMPLICIT_CAST_TO_ANY")
 class MyTracksFragment : Fragment() {
     private lateinit var binding: FragmentMyTracksBinding
     private lateinit var adapter: SongRVAdapter
-
-
+    companion object {
+        var isShuffle: Boolean = false
+    }
+    val _position: Int = 0
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -36,6 +40,7 @@ class MyTracksFragment : Fragment() {
 
         adapter = SongRVAdapter(requireContext(), musicListMF) { song, position ->
             openPlayerFragment(position)
+
         }
 
         binding.rv.apply {
@@ -70,16 +75,32 @@ class MyTracksFragment : Fragment() {
             false
         }
 
+        binding.btnShuffle.setOnClickListener{
+            isShuffle = true
+            val action = PlayerFragmentDirections.actionGlobalPlayerFragment(
+                SONGCLASS = "Shuffle",
+                SONGPOSITION = 0,
+                NAMEPLAYLIST = "Перемешанное"
+            )
+            findNavController().navigate(action)
+        }
+
+        binding.btnBack.setOnClickListener{
+            findNavController().popBackStack()
+        }
+
     }
 
 
 
-    private fun openPlayerFragment(position: Int) {
+    private fun openPlayerFragment(position: Int = 0) {
         val action = PlayerFragmentDirections.actionGlobalPlayerFragment(
             SONGCLASS = (if (musicListMF[position].id == PlayerFragment.nowPlayingId) "MiniPlayer" else "MyMusic"),
-            SONGPOSITION = position,
-            NAMEPLAYLIST = "Мои треки"
+            SONGPOSITION = (if (musicListMF[position].id == PlayerFragment.nowPlayingId && isShuffle) songPosition else position),
+            NAMEPLAYLIST = (if (musicListMF[position].id == PlayerFragment.nowPlayingId && isShuffle) "Перемешанное" else "Мои треки")
         )
+        if (musicListMF[position].id != PlayerFragment.nowPlayingId && isShuffle)
+            isShuffle = false
         findNavController().navigate(action)
     }
 }

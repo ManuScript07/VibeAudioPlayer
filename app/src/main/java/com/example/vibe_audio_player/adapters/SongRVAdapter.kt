@@ -44,14 +44,15 @@ class SongRVAdapter(
         holder.title.text = songs[position].title
         holder.artist.text = songs[position].artist
         holder.duration.text = formatDuration(songs[position].duration)
+
         holder.menu.setOnClickListener{
             Toast.makeText(context, position.toString(), Toast.LENGTH_SHORT).show()
         }
+
         Glide.with(context)
             .load(songs[position].artUri)
             .apply(RequestOptions().placeholder(R.drawable.baseline_music_off_24).centerCrop())
             .into(holder.binding.imageView)
-
     }
 
 
