@@ -4,4 +4,22 @@
         <item name="android:background">@color/black_overlay</item>
         <item name="android:buttonBarStyle">?android:attr/buttonBarStyle</item>
     </style>
+
+    <style name="CustomSearchView" parent="Widget.AppCompat.SearchView">
+        <!-- Цвет иконки поиска -->
+        <item name="searchIcon">@drawable/search</item>
+        <item name="closeIcon">@drawable/baseline_clear_24</item>
+        <item name="searchHintIcon">@null</item> <!-- Убираем иконку подсказки -->
+        <item name="queryBackground">@null</item> <!-- Убираем фон текстового поля -->
+        <item name="searchViewStyle">@style/CustomSearchViewStyle</item>
+    </style>
+
+    <style name="CustomSearchViewStyle">
+        <!-- Цвет текста и подсказки -->
+        <item name="android:textColorHint">@color/grey</item>
+        <item name="android:textColor">@color/black</item>
+        <!-- Отступы -->
+        <item name="android:padding">0dp</item>
+        <item name="android:drawablePadding">0dp</item>
+    </style>
 </resources>

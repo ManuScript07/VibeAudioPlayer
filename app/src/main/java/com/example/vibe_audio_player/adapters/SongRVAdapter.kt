@@ -2,7 +2,9 @@ package com.example.vibe_audio_player.adapters
 import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -41,6 +43,7 @@ class SongRVAdapter(
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: SongViewHolder, position: Int) {
         holder.bind(songs[position], position, onItemClicked)
+
         holder.title.text = songs[position].title
         holder.artist.text = songs[position].artist
         holder.duration.text = formatDuration(songs[position].duration)
@@ -53,6 +56,8 @@ class SongRVAdapter(
             .load(songs[position].artUri)
             .apply(RequestOptions().placeholder(R.drawable.baseline_music_off_24).centerCrop())
             .into(holder.binding.imageView)
+
+        setAnimation(holder.itemView)
     }
 
 
@@ -61,10 +66,20 @@ class SongRVAdapter(
 
 
     @SuppressLint("NotifyDataSetChanged")
-    fun updateData(newSongs: List<Song>) {
-        songs.clear() // Очистка текущего списка
-        songs.addAll(newSongs) // Добавление новых данных
-        notifyDataSetChanged() // Обновление адаптера
+    fun updateData(newSongs: ArrayList<Song>) {
+        songs.clear()
+        songs.addAll(newSongs)
+        notifyDataSetChanged()
+    }
+
+    private fun setAnimation(view: View) {
+        val animation = AnimationUtils.loadAnimation(view.context, R.anim.item_animation)
+        view.startAnimation(animation)
+    }
+
+    override fun onViewDetachedFromWindow(holder: SongViewHolder) {
+        super.onViewDetachedFromWindow(holder)
+        holder.itemView.clearAnimation()
     }
 }
 

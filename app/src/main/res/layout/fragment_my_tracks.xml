@@ -61,7 +61,8 @@
         app:layout_constraintTop_toBottomOf="@id/header"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:ignore="HardcodedText" />
+        tools:ignore="HardcodedText"
+        android:imeOptions="actionDone"/>
 
     <TextView
         android:id="@+id/btn_shuffle"
@@ -76,6 +77,7 @@
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginStart="16dp"
         android:drawableTint="@color/purple_500"/>
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv"

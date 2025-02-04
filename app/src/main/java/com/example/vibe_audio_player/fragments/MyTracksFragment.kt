@@ -1,6 +1,8 @@
 package com.example.vibe_audio_player.fragments
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -8,10 +10,15 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.vibe_audio_player.R
+import com.example.vibe_audio_player.Song
+import com.example.vibe_audio_player.activities.MainActivity
 import com.example.vibe_audio_player.adapters.SongRVAdapter
 import com.example.vibe_audio_player.databinding.FragmentMyTracksBinding
 import com.example.vibe_audio_player.fragments.MainFragment.Companion.musicListMF
@@ -22,10 +29,15 @@ import com.example.vibe_audio_player.fragments.PlayerFragment.Companion.songPosi
 class MyTracksFragment : Fragment() {
     private lateinit var binding: FragmentMyTracksBinding
     private lateinit var adapter: SongRVAdapter
+    var musicListSearch: ArrayList<Song> = ArrayList()
     companion object {
         var isShuffle: Boolean = false
+        var isSearch: Boolean = false
+        var musicListMTF: ArrayList<Song> = ArrayList()
     }
-    val _position: Int = 0
+
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -34,11 +46,13 @@ class MyTracksFragment : Fragment() {
         return binding.root
     }
 
+    @RequiresApi(Build.VERSION_CODES.R)
     @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapter = SongRVAdapter(requireContext(), musicListMF) { song, position ->
+
+        adapter = SongRVAdapter(requireContext(), musicListMTF) { song, position ->
             openPlayerFragment(position)
 
         }
@@ -50,30 +64,69 @@ class MyTracksFragment : Fragment() {
             adapter = this@MyTracksFragment.adapter
         }
 
+        updateSongs()
+
         val searchBar = binding.searchBar
+        searchBar.clearFocus()
         searchBar.setCompoundDrawablesWithIntrinsicBounds(R.drawable.search, 0, 0, 0) // Скрываем крестик
 
         searchBar.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+
             override fun afterTextChanged(s: Editable?) {
+                isSearch = if (PlayerFragment.musicService != null) true else false
+
                 binding.btnShuffle.visibility = if (s.isNullOrEmpty()) View.VISIBLE else View.INVISIBLE
                 val clearIcon = if (s.isNullOrEmpty()) 0 else R.drawable.baseline_clear_24
                 searchBar.setCompoundDrawablesWithIntrinsicBounds(R.drawable.search, 0, clearIcon, 0)
+                musicListSearch = ArrayList()
+                if(s != null){
+                    musicListSearch.addAll(musicListMF.filter { song ->
+                        song.title.contains(s, ignoreCase = true) ||
+                                song.artist.contains(s, ignoreCase = true)
+                    })
+                    adapter.updateData(musicListSearch)
+                }
             }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
+
+        if (PlayerFragment.musicService != null)
+            isSearch = true
+        else
+            isSearch = false
 
         searchBar.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_UP) {
                 val drawableEnd = searchBar.compoundDrawables[2] ?: return@setOnTouchListener false
                 if (event.rawX >= (searchBar.right - drawableEnd.bounds.width())) {
                     searchBar.text.clear()
+
+                    if (!musicListSearch.isEmpty())
+                        isSearch = true
                     return@setOnTouchListener true
                 }
             }
             false
         }
+
+        searchBar.setOnEditorActionListener { v, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_SEARCH) {
+                // Скрываем клавиатуру
+                val imm = v.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.hideSoftInputFromWindow(v.windowToken, 0)
+
+                // Опционально убираем фокус с поля ввода
+                searchBar.clearFocus()
+
+                return@setOnEditorActionListener true
+            }
+            false
+        }
+
+
 
         binding.btnShuffle.setOnClickListener{
             isShuffle = true
@@ -88,19 +141,39 @@ class MyTracksFragment : Fragment() {
         binding.btnBack.setOnClickListener{
             findNavController().popBackStack()
         }
-
     }
 
+    @RequiresApi(Build.VERSION_CODES.R)
+    override fun onResume() {
+        super.onResume()
+        if (adapter.itemCount == 0)
+            updateSongs()
+    }
 
 
     private fun openPlayerFragment(position: Int = 0) {
         val action = PlayerFragmentDirections.actionGlobalPlayerFragment(
-            SONGCLASS = (if (musicListMF[position].id == PlayerFragment.nowPlayingId) "MiniPlayer" else "MyMusic"),
-            SONGPOSITION = (if (musicListMF[position].id == PlayerFragment.nowPlayingId && isShuffle) songPosition else position),
-            NAMEPLAYLIST = (if (musicListMF[position].id == PlayerFragment.nowPlayingId && isShuffle) "Перемешанное" else "Мои треки")
+            SONGCLASS = (if (musicListMTF[position].id == PlayerFragment.nowPlayingId) "MiniPlayer" else "MyTracks"),
+            SONGPOSITION = (if (musicListMTF[position].id == PlayerFragment.nowPlayingId && (isShuffle || isSearch)) songPosition else position),
+            NAMEPLAYLIST = (if (musicListMTF[position].id == PlayerFragment.nowPlayingId && isShuffle) "Перемешанное" else "Мои треки")
         )
-        if (musicListMF[position].id != PlayerFragment.nowPlayingId && isShuffle)
+        if (musicListMTF[position].id != PlayerFragment.nowPlayingId && isShuffle)
             isShuffle = false
         findNavController().navigate(action)
+    }
+
+
+    @SuppressLint("SetTextI18n")
+    @RequiresApi(Build.VERSION_CODES.R)
+    private fun updateSongs(updateLoadSongs: Boolean = false){
+        if (updateLoadSongs) {
+            musicListMF = MainActivity.loadTracks(requireContext())
+            if (PlayerFragment.musicService != null) {
+                PlayerFragment.musicListPF.clear()
+                PlayerFragment.musicListPF.addAll(musicListMF) // Чтобы плеер не крашился
+            }
+        }
+        val updateList = ArrayList(musicListMF)
+        adapter.updateData(updateList)
     }
 }

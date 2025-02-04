@@ -160,11 +160,12 @@ class PlayerFragment: Fragment(), ServiceConnection, MediaPlayer.OnCompletionLis
         when(songClass){
             "MyMusic" -> {
                 initMusicServiceAndPlayList(MainFragment.musicListMF)
-//                namePlayList = "Мои треки"
             }
-            "Shuffle" ->{
+            "Shuffle" -> {
                 initMusicServiceAndPlayList(MainFragment.musicListMF, shuffle = true)
-
+            }
+            "MyTracks" -> {
+                initMusicServiceAndPlayList(MyTracksFragment.musicListMTF)
             }
 
             "MiniPlayer" -> {
