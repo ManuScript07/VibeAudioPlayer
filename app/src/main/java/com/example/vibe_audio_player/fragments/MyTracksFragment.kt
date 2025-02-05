@@ -12,12 +12,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.vibe_audio_player.R
 import com.example.vibe_audio_player.Song
+import com.example.vibe_audio_player.SortListener
 import com.example.vibe_audio_player.activities.MainActivity
 import com.example.vibe_audio_player.adapters.SongRVAdapter
 import com.example.vibe_audio_player.databinding.FragmentMyTracksBinding
@@ -26,17 +28,16 @@ import com.example.vibe_audio_player.fragments.PlayerFragment.Companion.songPosi
 
 
 @Suppress("IMPLICIT_CAST_TO_ANY")
-class MyTracksFragment : Fragment() {
+class MyTracksFragment : Fragment(), SortListener {
     private lateinit var binding: FragmentMyTracksBinding
     private lateinit var adapter: SongRVAdapter
     var musicListSearch: ArrayList<Song> = ArrayList()
+    var musicListSorted: ArrayList<Song> = ArrayList()
     companion object {
         var isShuffle: Boolean = false
         var isSearch: Boolean = false
         var musicListMTF: ArrayList<Song> = ArrayList()
     }
-
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,12 +51,14 @@ class MyTracksFragment : Fragment() {
     @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-
+        if (musicListMTF.isNotEmpty())
+            Toast.makeText(requireContext(), musicListMTF[0].title, Toast.LENGTH_SHORT).show()
         adapter = SongRVAdapter(requireContext(), musicListMTF) { song, position ->
             openPlayerFragment(position)
-
         }
+        if (musicListMTF.isNotEmpty())
+            Toast.makeText(requireContext(), musicListMTF[0].title, Toast.LENGTH_SHORT).show()
+
 
         binding.rv.apply {
             setHasFixedSize(true)
@@ -63,16 +66,14 @@ class MyTracksFragment : Fragment() {
             layoutManager = LinearLayoutManager(context)
             adapter = this@MyTracksFragment.adapter
         }
-
-        updateSongs()
+//        updateSongs()
 
         val searchBar = binding.searchBar
         searchBar.clearFocus()
         searchBar.setCompoundDrawablesWithIntrinsicBounds(R.drawable.search, 0, 0, 0) // Скрываем крестик
 
         searchBar.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
@@ -92,6 +93,7 @@ class MyTracksFragment : Fragment() {
                 }
             }
         })
+
 
         if (PlayerFragment.musicService != null)
             isSearch = true
@@ -128,6 +130,7 @@ class MyTracksFragment : Fragment() {
 
 
 
+
         binding.btnShuffle.setOnClickListener{
             isShuffle = true
             val action = PlayerFragmentDirections.actionGlobalPlayerFragment(
@@ -137,6 +140,13 @@ class MyTracksFragment : Fragment() {
             )
             findNavController().navigate(action)
         }
+
+        binding.btnSort.setOnClickListener{
+            val bottomSheet = SortBottomSheetFragment()
+            bottomSheet.setSortListener(this)
+            bottomSheet.show(parentFragmentManager, "SortBottomSheet")
+        }
+
 
         binding.btnBack.setOnClickListener{
             findNavController().popBackStack()
@@ -173,7 +183,26 @@ class MyTracksFragment : Fragment() {
                 PlayerFragment.musicListPF.addAll(musicListMF) // Чтобы плеер не крашился
             }
         }
+
         val updateList = ArrayList(musicListMF)
         adapter.updateData(updateList)
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    override fun onSortSelected(sortOption: String, isAscending: Boolean) {
+        musicListSorted = ArrayList()
+        musicListSorted.addAll(musicListMTF)
+        when (sortOption) {
+            "Название песни" -> musicListSorted.sortBy { it.title.lowercase() }
+            "Имя артиста" -> musicListSorted.sortBy { it.artist.lowercase() }
+            "Название альбома" -> musicListSorted.sortBy { it.album.lowercase() }
+            "Время добавления" -> musicListSorted.sortBy { it.id } // Если id идёт по порядку добавления
+            "Длительность" -> musicListSorted.sortBy { it.duration }
+            "Размер" -> musicListSorted.sortBy { it.path.length } // Файлы большего размера обычно имеют длинные пути
+        }
+        if (!isAscending) {
+            musicListSorted.reverse()
+        }
+        adapter.updateData(musicListSorted)
     }
 }
