@@ -2,6 +2,7 @@ package com.example.vibe_audio_player.fragments
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
@@ -12,7 +13,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -31,8 +31,16 @@ import com.example.vibe_audio_player.fragments.PlayerFragment.Companion.songPosi
 class MyTracksFragment : Fragment(), SortListener {
     private lateinit var binding: FragmentMyTracksBinding
     private lateinit var adapter: SongRVAdapter
+
     var musicListSearch: ArrayList<Song> = ArrayList()
     var musicListSorted: ArrayList<Song> = ArrayList()
+
+    private lateinit var sharedPrefs: SharedPreferences
+    private var selectedSortOption: String = "Название песни"
+    private var isAscending: Boolean = true
+
+    private var isClickAllowed = true
+
     companion object {
         var isShuffle: Boolean = false
         var isSearch: Boolean = false
@@ -51,14 +59,13 @@ class MyTracksFragment : Fragment(), SortListener {
     @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (musicListMTF.isNotEmpty())
-            Toast.makeText(requireContext(), musicListMTF[0].title, Toast.LENGTH_SHORT).show()
+
+        sharedPrefs = requireContext().getSharedPreferences("SortPreferences", Context.MODE_PRIVATE)
+        loadUserChoice()
+
         adapter = SongRVAdapter(requireContext(), musicListMTF) { song, position ->
             openPlayerFragment(position)
         }
-        if (musicListMTF.isNotEmpty())
-            Toast.makeText(requireContext(), musicListMTF[0].title, Toast.LENGTH_SHORT).show()
-
 
         binding.rv.apply {
             setHasFixedSize(true)
@@ -66,7 +73,7 @@ class MyTracksFragment : Fragment(), SortListener {
             layoutManager = LinearLayoutManager(context)
             adapter = this@MyTracksFragment.adapter
         }
-//        updateSongs()
+        updateSongs()
 
         val searchBar = binding.searchBar
         searchBar.clearFocus()
@@ -78,18 +85,20 @@ class MyTracksFragment : Fragment(), SortListener {
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
             override fun afterTextChanged(s: Editable?) {
-                isSearch = if (PlayerFragment.musicService != null) true else false
+                isSearch = PlayerFragment.musicService != null
 
                 binding.btnShuffle.visibility = if (s.isNullOrEmpty()) View.VISIBLE else View.INVISIBLE
                 val clearIcon = if (s.isNullOrEmpty()) 0 else R.drawable.baseline_clear_24
                 searchBar.setCompoundDrawablesWithIntrinsicBounds(R.drawable.search, 0, clearIcon, 0)
                 musicListSearch = ArrayList()
-                if(s != null){
+
+                if(s != null) {
                     musicListSearch.addAll(musicListMF.filter { song ->
                         song.title.contains(s, ignoreCase = true) ||
                                 song.artist.contains(s, ignoreCase = true)
                     })
-                    adapter.updateData(musicListSearch)
+//                    adapter.updateData(musicListSearch)
+                    onSortSelected(selectedSortOption, isAscending, 0)
                 }
             }
         })
@@ -162,14 +171,19 @@ class MyTracksFragment : Fragment(), SortListener {
 
 
     private fun openPlayerFragment(position: Int = 0) {
-        val action = PlayerFragmentDirections.actionGlobalPlayerFragment(
-            SONGCLASS = (if (musicListMTF[position].id == PlayerFragment.nowPlayingId) "MiniPlayer" else "MyTracks"),
-            SONGPOSITION = (if (musicListMTF[position].id == PlayerFragment.nowPlayingId && (isShuffle || isSearch)) songPosition else position),
-            NAMEPLAYLIST = (if (musicListMTF[position].id == PlayerFragment.nowPlayingId && isShuffle) "Перемешанное" else "Мои треки")
-        )
-        if (musicListMTF[position].id != PlayerFragment.nowPlayingId && isShuffle)
-            isShuffle = false
-        findNavController().navigate(action)
+        if (isClickAllowed) {
+            isClickAllowed = false
+            val action = PlayerFragmentDirections.actionGlobalPlayerFragment(
+                SONGCLASS = (if (musicListMTF[position].id == PlayerFragment.nowPlayingId) "MiniPlayer" else "MyTracks"),
+                SONGPOSITION = (if (musicListMTF[position].id == PlayerFragment.nowPlayingId && (isShuffle || isSearch)) songPosition else position),
+                NAMEPLAYLIST = (if (musicListMTF[position].id == PlayerFragment.nowPlayingId && isShuffle) "Перемешанное" else "Мои треки")
+            )
+            if (musicListMTF[position].id != PlayerFragment.nowPlayingId && isShuffle)
+                isShuffle = false
+            findNavController().navigate(action)
+
+            binding.root.postDelayed({ isClickAllowed = true }, 500)
+        }
     }
 
 
@@ -184,14 +198,20 @@ class MyTracksFragment : Fragment(), SortListener {
             }
         }
 
-        val updateList = ArrayList(musicListMF)
-        adapter.updateData(updateList)
+//        val updateList = ArrayList(musicListMF)
+        onSortSelected(selectedSortOption, isAscending, 2)
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    override fun onSortSelected(sortOption: String, isAscending: Boolean) {
+    override fun onSortSelected(sortOption: String, isAscending: Boolean, mode: Int) {
+        loadUserChoice()
         musicListSorted = ArrayList()
-        musicListSorted.addAll(musicListMTF)
+        when(mode){
+            0 -> musicListSorted.addAll(musicListSearch)
+            1 -> musicListSorted.addAll(musicListMTF)
+            2 -> musicListSorted.addAll(musicListMF)
+        }
+
         when (sortOption) {
             "Название песни" -> musicListSorted.sortBy { it.title.lowercase() }
             "Имя артиста" -> musicListSorted.sortBy { it.artist.lowercase() }
@@ -203,6 +223,14 @@ class MyTracksFragment : Fragment(), SortListener {
         if (!isAscending) {
             musicListSorted.reverse()
         }
+
         adapter.updateData(musicListSorted)
     }
+
+    private fun loadUserChoice() {
+        selectedSortOption = sharedPrefs.getString("SORT_OPTION", "Название песни") ?: "Название песни"
+        isAscending = sharedPrefs.getBoolean("SORT_ORDER", true)
+    }
+
+
 }
