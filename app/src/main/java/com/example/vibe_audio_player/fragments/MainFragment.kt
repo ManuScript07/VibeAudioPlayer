@@ -62,7 +62,7 @@ class MainFragment : Fragment() {
             PlayerFragment.musicService!!.createMediaPlayer()
             Glide.with(this)
                 .load(musicListPF[songPosition].artUri)
-                .apply(RequestOptions().placeholder(R.drawable.baseline_music_off_24).centerCrop())
+                .apply(RequestOptions().placeholder(R.drawable.baseline_image_not_supported_24).centerCrop())
                 .into(binding.image)
 
             binding.songName.text = musicListPF[songPosition].title
@@ -113,7 +113,7 @@ class MainFragment : Fragment() {
             binding.songName.isSelected = true
             Glide.with(requireActivity())
                 .load(musicListPF[songPosition].artUri)
-                .apply(RequestOptions().placeholder(R.drawable.baseline_music_off_24).centerCrop())
+                .apply(RequestOptions().placeholder(R.drawable.baseline_image_not_supported_24).centerCrop())
                 .into(binding.image)
             binding.songName.text = musicListPF[songPosition].title
             binding.artistName.text = musicListPF[songPosition].artist

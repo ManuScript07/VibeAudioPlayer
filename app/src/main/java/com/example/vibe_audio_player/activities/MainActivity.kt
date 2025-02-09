@@ -39,6 +39,7 @@ class MainActivity : AppCompatActivity() {
                 MediaStore.Audio.Media.ARTIST,
                 MediaStore.Audio.Media.DURATION,
                 MediaStore.Audio.Media.DATE_ADDED,
+                MediaStore.Audio.Media.SIZE,
                 MediaStore.Audio.Media.DATA,
                 MediaStore.Audio.Media.ALBUM_ID,
             )
@@ -57,6 +58,8 @@ class MainActivity : AppCompatActivity() {
                 val albumIndex = c.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM)
                 val artistIndex = c.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST)
                 val durationIndex = c.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION)
+                val dateAddedIndex = c.getColumnIndexOrThrow(MediaStore.Audio.Media.DATE_ADDED)
+                val sizeIndex = c.getColumnIndexOrThrow(MediaStore.Audio.Media.SIZE)
                 val dataIndex = c.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA)
                 val albumIdIndex = c.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID)
 
@@ -66,6 +69,8 @@ class MainActivity : AppCompatActivity() {
                     val album = c.getString(albumIndex)
                     val artist = c.getString(artistIndex)
                     val duration = c.getLong(durationIndex)
+                    val dateAdded = c.getLong(dateAddedIndex)
+                    val size = c.getLong(sizeIndex)
                     val path = c.getString(dataIndex)
                     val albumId = c.getLong(albumIdIndex).toString()
                     val uri = Uri.parse("content://media/external/audio/albumart")
@@ -77,6 +82,8 @@ class MainActivity : AppCompatActivity() {
                         album = album,
                         artist = artist,
                         duration = duration,
+                        dateAdded = dateAdded,
+                        size = size,
                         path = path,
                         artUri = artUri
                     )

@@ -67,7 +67,7 @@ class PlayerFragment: Fragment(), ServiceConnection, MediaPlayer.OnCompletionLis
             musicListPF.add(getMusicDetails(requireActivity().intent.data!!))
             Glide.with(requireContext())
                 .load(getImgArt(musicListPF[songPosition].path))
-                .apply(RequestOptions().placeholder(R.drawable.baseline_music_off_24).centerCrop())
+                .apply(RequestOptions().placeholder(R.drawable.baseline_image_not_supported_24).centerCrop())
                 .into(binding.songImg)
 
             binding.title.text = musicListPF[songPosition].title
@@ -198,7 +198,7 @@ class PlayerFragment: Fragment(), ServiceConnection, MediaPlayer.OnCompletionLis
 
         Glide.with(binding.songImg)
             .load(musicListPF[songPosition].artUri)
-            .apply(RequestOptions().placeholder(R.drawable.baseline_music_off_24).centerCrop())
+            .apply(RequestOptions().placeholder(R.drawable.baseline_image_not_supported_24).centerCrop())
             .into(binding.songImg)
 
         binding.title.text = musicListPF[songPosition].title
@@ -211,7 +211,7 @@ class PlayerFragment: Fragment(), ServiceConnection, MediaPlayer.OnCompletionLis
             )
         }else {
             BitmapFactory.decodeResource(
-                img, R.drawable.baseline_music_off_24
+                img, R.drawable.baseline_image_not_supported_24
 //                        img, R.drawable.baseline_music_off_24 Если крашится
             )
         }
@@ -275,7 +275,8 @@ class PlayerFragment: Fragment(), ServiceConnection, MediaPlayer.OnCompletionLis
             cursor!!.moveToFirst()
             val path = dataColumn?.let { cursor.getString(it) }
             val duration = durationColumn?.let { cursor.getLong(it) }!!
-            return Song(id = "Unknown", title = path.toString(), album = "Unknown", artist = "Unknown", duration = duration,
+            return Song(id = "Unknown", title = path.toString(), album = "Unknown",
+                artist = "Unknown", duration = duration, dateAdded = -1, size = -1,
                 artUri = "Unknown", path = path.toString())
         }finally {
             cursor?.close()
@@ -362,7 +363,7 @@ class PlayerFragment: Fragment(), ServiceConnection, MediaPlayer.OnCompletionLis
         Glide.with(MainFragment.binding.image)
             .load(musicListPF[songPosition].artUri)
             .apply(
-                RequestOptions().placeholder(R.drawable.baseline_music_off_24).centerCrop()
+                RequestOptions().placeholder(R.drawable.baseline_image_not_supported_24).centerCrop()
             )
             .into(MainFragment.binding.image)
 
@@ -403,7 +404,7 @@ class PlayerFragment: Fragment(), ServiceConnection, MediaPlayer.OnCompletionLis
             MainFragment.binding.songName.isSelected = true
             Glide.with(MainFragment.binding.image)
                 .load(musicListPF[songPosition].artUri)
-                .apply(RequestOptions().placeholder(R.drawable.baseline_music_off_24).centerCrop())
+                .apply(RequestOptions().placeholder(R.drawable.baseline_image_not_supported_24).centerCrop())
                 .into(MainFragment.binding.image)
             MainFragment.binding.songName.text = musicListPF[songPosition].title
             MainFragment.binding.artistName.text = musicListPF[songPosition].artist

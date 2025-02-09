@@ -54,7 +54,7 @@ class SongRVAdapter(
 
         Glide.with(context)
             .load(songs[position].artUri)
-            .apply(RequestOptions().placeholder(R.drawable.baseline_music_off_24).centerCrop())
+            .apply(RequestOptions().placeholder(R.drawable.baseline_image_not_supported_black_24).centerCrop())
             .into(holder.binding.imageView)
 
         setAnimation(holder.itemView)

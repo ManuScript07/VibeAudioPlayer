@@ -44,51 +44,58 @@
             android:paddingStart="110dp"
             android:src="@drawable/baseline_keyboard_arrow_right_24"
             app:tint="@color/black"/>
-
     </LinearLayout>
 
-    <ViewSwitcher
-        android:id="@+id/viewSwitcher"
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="80dp">
 
-        <!-- RecyclerView для списка треков -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
+        <ViewSwitcher
+            android:id="@+id/viewSwitcher"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:padding="16dp"
-            android:scrollbars="vertical"
-            android:layout_marginTop="70dp"/>
-
-        <!-- Сообщение и кнопка -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginTop="-170dp">
+            android:layout_marginTop="0dp">
 
-            <TextView
-                android:id="@+id/noTracksMessage"
-                android:layout_width="wrap_content"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Вы ещё не загрузили ни одного трека"
-                android:textSize="18sp"
-                android:padding="8dp"
-                android:textColor="@color/black"/>
+                android:clipToPadding="false"
+                android:padding="16dp"
+                android:scrollbars="vertical"
+                android:layout_marginTop="0dp"/>
 
-            <Button
-                android:id="@+id/addMusicButton"
-                android:layout_width="wrap_content"
+            <!-- Сообщение и кнопка -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Добавить музыку" />
-        </LinearLayout>
-    </ViewSwitcher>
+                android:gravity="center"
+                android:orientation="vertical"
+                android:layout_marginTop="0dp">
 
-     <LinearLayout
+                <TextView
+                    android:id="@+id/noTracksMessage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Вы ещё не загрузили ни одного трека"
+                    android:textSize="18sp"
+                    android:padding="8dp"
+                    android:textColor="@color/black"/>
+
+                <Button
+                    android:id="@+id/addMusicButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Добавить музыку" />
+            </LinearLayout>
+        </ViewSwitcher>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
